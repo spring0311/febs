@@ -1,0 +1,153 @@
+<style>
+    .layui-layer-page .layui-layer-content {
+        overflow: visible !important;
+    }
+</style>
+<div class="layui-col-md12 layui-col-sm0 layui-col-xs12" id="role-add">
+    <div class="layui-card">
+        <div class="layui-card-header" id="form-header">新增角色</div>
+        <div class="layui-card-body febs-table-full">
+            <form class="layui-form layui-table-form" action=""
+                  lay-filter="role-form">
+                <div class="layui-form-item febs-hide">
+                    <label class="layui-form-label febs-form-item-require">角色ID：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="roleId" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label febs-form-item-require">角色名称：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="roleName" autocomplete="off"
+                               class="layui-input" minlength="2" maxlength="10"
+                               lay-verify="range">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">角色描述：</label>
+                    <div class="layui-input-block">
+            <textarea name="remark" maxlength="50"
+                      class="layui-textarea"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">角色权限：</label>
+                    <div class="layui-input-block menu-tree"
+                         style="margin-top: .8rem;"></div>
+                </div>
+                <div class="layui-form-item febs-hide">
+                    <button type="reset" class="layui-btn" id="reset-form"></button>
+                    <button class="layui-btn" lay-submit="" lay-filter="role-form-submit" id="submit-form"></button>
+                </div>
+            </form>
+        </div>
+        <!--     <div class="layui-card-footer">
+              <button class="layui-btn" id="submit">保存</button>
+            </div> -->
+    </div>
+</div>
+<script type="text/javascript">
+    layui.use(['febs', 'form', 'formSelects', 'validate', 'treeSelect', 'eleTree'], function () {
+        var $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            formSelects = layui.formSelects,
+            treeSelect = layui.treeSelect,
+            form = layui.form,
+            eleTree = layui.eleTree,
+            $view = $('#role-add'),
+            $query = $view.find('#query'),
+            $reset = $view.find('#reset'),
+            $submit = $view.find('#submit'),
+            validate = layui.validate;
+
+        form.verify(validate);
+        form.render();
+
+        formSelects.render();
+
+        var menuTree = eleTree.render({
+            elem: '.menu-tree',
+            url: ctx + 'menu/tree',
+            showCheckbox: true,
+            checkStrictly: true,
+            where: {
+                "invalidate_ie_cache": new Date()
+            },
+            accordion: true,
+            checkStrictly: false,
+            renderAfterExpand: false,
+            request: {
+                name: "title",
+                key: "id",
+                children: "childs",
+                checked: "checked",
+                data: "data"
+            },
+            response: {
+                statusName: "code",
+                statusCode: 200,
+                dataName: "data"
+            }
+        });
+
+
+        form.on('submit(role-form-submit)', function (data) {
+            var selected = menuTree.getChecked(false, true);
+            var menuIds = [];
+            layui.each(selected, function (key, item) {
+                menuIds.push(item.id)
+            });
+            data.field.menuIds = menuIds.join(',');
+            if (!menuIds.length) {
+                febs.modal.confirm('提示', '当前角色未授予任何权限，是否继续？', function () {
+                    addOrUpdateRole(data.field);
+                });
+            } else {
+                addOrUpdateRole(data.field);
+            }
+            return false;
+        });
+
+
+        $submit.on('click', function () {
+            $view.find('#submit-form').trigger('click');
+        });
+
+        var addOrUpdateRole = function (data) {
+            if (data.roleId && $header.text() === '修改角色') {
+                febs.post(ctx + 'role/update', data, function () {
+                    //$reset.trigger('click');
+                    layer.closeAll();
+                    $('#febs-role').find('#query').click();
+                    //$query.trigger('click');
+                    febs.alert.success('修改角色成功');
+                });
+            } else {
+                febs.post(ctx + 'role', data, function () {
+                    // $query.trigger('click');
+                    layer.closeAll();
+                    $('#febs-role').find('#query').click();
+                    febs.alert.success('新增角色成功');
+                });
+            }
+        }
+
+
+        /*  function resetRoleForm() {
+             $view.find('#reset-form').trigger('click');
+             $header.text('新增角色');
+             menuTree.setChecked([], true);
+             menuTree.unExpandAll();
+         }  */
+
+    });
+
+
+</script>
+
+
+
+
+
+
