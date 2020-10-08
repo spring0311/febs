@@ -281,11 +281,11 @@ public class ViewController extends BaseController {
         return FebsUtil.view("system/cycle/cycle");
     }
 
-    @GetMapping(FebsConstant.VIEW_PREFIX + "system/cycle/update/{cycleId}")
+    @GetMapping(FebsConstant.VIEW_PREFIX + "system/cycle/update/{periodId}")
     @RequiresPermissions("matter:view")
-    public String updateCycle(@PathVariable("cycleId") Long cycleId, HttpSession session) {
-        System.err.println("updateCycle:" + cycleId);
-        session.setAttribute("cycleId", cycleId);
+    public String updateCycle(@PathVariable("periodId") Long periodId, HttpSession session) {
+        System.err.println("updateCycle:" + periodId);
+        session.setAttribute("periodId", periodId);
         return FebsUtil.view("system/cycle/cycleUpdate");
     }
 

@@ -1,0 +1,299 @@
+<style>
+    .gan #febs-matter .layui-form-label {
+        width: 65px;
+    }
+
+    .gan #date-list .layui-laydate-content td, #date-list .layui-laydate-content th {
+        width: 200px;
+        height: 120px;
+        position: relative;
+    }
+
+    .gan .layui-laydate-main {
+        width: 100%;
+
+    }
+
+    .gan .layui-laydate-content > table {
+        width: 100%;
+    }
+
+    .gan .layui-laydate-content td, .layui-laydate-content th {
+        width: 60px;
+        height: 60px;
+        padding: 5px;
+        text-align: center;
+        font-size: 20px;
+    }
+
+    .gan .layui-laydate-footer {
+        display: none;
+    }
+
+    .gan .layui-laydate-content > table > th {
+        height: 60px;
+    }
+
+    .gan .layui-laydate-content > table > td {
+        height: 60px;
+    }
+
+
+    .gan .layui-laydate {
+        width: 50%;
+    }
+
+    .gan .layui-laydate-header {
+        width: 100%;
+    }
+
+    .gan .quan_wrpss {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        max-width: 30px;
+    }
+
+    .gan .quan_wrpss > span {
+        width: 10px;
+        height: 10px;
+        margin: 2px;
+        display: block;
+        border-radius: 5px;
+    }
+
+    .gan .l1 {
+        background-color: #DC143C;
+    }
+
+    .gan .l2 {
+        background-color: #FF8C00;
+    }
+
+    .gan .l3 {
+        background-color: #0000FF;
+    }
+
+    .gan .l4 {
+        background-color: #90EE90;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="febs-calendar"
+     lay-title="日历">
+    <div class="layui-row febs-container">
+        <!--<div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form"
+                          lay-filter="matter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md10">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">展示时间类型</label>
+                                        <div class="layui-input-inline">
+                                            <select name="status">
+                                                <option></option>
+                                                <option value="1">创建时间</option>
+                                                <option value="2">要求完成时间</option>
+                                                <option value="3">实际完成时间</option>
+                                            </select>
+                                        </div>
+                                        <label class="layui-form-label">展示已完成</label>
+                                        <div class="layui-input-inline">
+                                            <select name="finish">
+                                                <option value="0">否</option>
+                                                <option value="2">是</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md2 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <button class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain  table-action"
+                                        id="cycle-table-form-submit">
+                                    <i class="layui-icon">&#xe848;</i>
+                                </button>
+                                <button class="layui-btn" lay-submit="" lay-filter="matter-cycle-form-submit"
+                                        id="submit"><i class="layui-icon">&#xe848;</i></button>
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain  table-action"
+                                     id="reset">
+                                    <i class="layui-icon">&#xe79b;</i>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>-->
+        <div>
+            <span style="color: black">提示:</span>
+            <span style="color: #DC143C">重要紧急,</span>
+            <span style="color: #FF8C00">重要不紧急,</span>
+            <span style="color: #0000FF">不重要紧急,</span>
+            <span style="color: #90EE90">不重要不紧急</span>
+        </div>
+        <div class="gan">
+        </div>
+        <table lay-filter="matterTableCan" lay-data="{id: 'matterTableCan'}" id="ceshi"></table>
+    </div>
+</div>
+</div>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdown', 'jquery', 'laydate', 'form', 'table', 'febs'], function () {
+        var $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdown = layui.dropdown,
+            $view = $('#febs-calendar'),
+            $query = $view.find('#query'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'matterName', type: null},
+            matterId,
+            tableIns;
+        form.render();
+        start();
+
+
+        function start() {
+            var str = "{";
+            var AJAX_URL = ctx
+            $.ajax({
+                url: AJAX_URL + 'matter/calendar',
+                success: (msg) => {
+                    var data = msg.data
+                    console.log(data)
+                    for (var i = 0; i < data.length; i++) {
+                        //console.log(data[i])
+                        var a = "";
+                        for (var j = 0; j < data[i].value.length; j++) {
+                            a = a + '"' + data[i].value[j] + '",';
+                        }
+                        a = a.slice(0, a.length - 1);
+                        str = str + '"' + data[i].name + '"' + ":[" + a + "],";
+                        //console.log("???:" + str);
+                    }
+                    str = str.slice(0, str.length - 1)
+                    str = str + "}";
+                    //console.log("str:" + str)
+                    var v = JSON.parse(str)
+                    laydate.render({
+                        elem: ".gan",
+                        position: 'static',
+                        arrs: v,
+                        done: function (value, date) { //监听日期被切换
+                            console.log("value:" + value)
+                            initTable(value);
+                        }
+                    })
+                }
+            })
+            return str;
+        }
+
+
+        function initTable(data) {
+            tableIns = febs.table.init({
+                elem: $view.find('#ceshi'),
+                id: 'matterTableCan',
+                data: data,
+                url: ctx + 'matter/listForOne?matterOpenStr=' + data,
+                cols: [[
+                    //{type: 'checkbox'},
+                    //{field: deptName('deptId'), title: '归口部门', width: 100},
+                    {field: 'matterName', title: '事务名称', width: 100},
+                    {field: 'deptName', title: '归口部门', width: 100},
+                    {field: 'matterText', title: '工作内容'},
+                    {field: 'cycleName', title: '周期', width: 90, sort: true},
+                    {field: 'matterOpenStr', title: '开始时间', width: 200, sort: true},
+                    {field: 'endStr', title: '完成时间', width: 200, sort: true},
+                    {title: '操作', toolbar: '#matter-calendar-option', width: 150}
+                ]]
+            });
+        }
+
+        table.on('tool(matterTableCan)', function (obj) {
+            var data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'del') {
+                deptId = data.deptId;
+                if (data.deptId == null) {
+                    febs.modal.confirm('删除任务', '确定删除该任务？', function () {
+                        deleteMatters(data.matterId);
+                    });
+                } else {
+                    febs.alert.success('没有删除此事务的权限');
+                }
+
+            }
+            if (layEvent === 'finish') {
+                var finish = data.finish;
+                febs.modal.confirm('修改完成状态', '确定修改?', function () {
+                    matterFinish(data.matterId);
+                });
+            }
+            if (layEvent === 'edit') {
+                matterId = data.matterId;
+                deptId = data.deptId;
+                if (data.deptId == null) {
+                    febs.modal.open('修改事务', 'system/matter/updateOne/' + matterId, {
+                        area: $(window).width() <= 750 ? '90%' : '50%',
+                        btn: ['提交', '取消'],
+                        yes: function (index, layero) {
+                            $('#matter-update-one').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                } else {
+                    febs.alert.success('没有修改此事务的权限');
+                }
+            }
+            if (layEvent === 'time') {
+                matterId = data.matterId;
+                deptId = data.deptId;
+                if (data.deptId == null) {
+                    febs.modal.open(data.matterName + ',提示时间设置', 'system/matter/remind/' + matterId, {
+                        area: $(window).width() <= 750 ? '90%' : '50%',
+                        btn: ['提交', '取消'],
+                        yes: function (index, layero) {
+                            $('#matter-remind').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                } else {
+                    febs.alert.success('没有修改此事务的权限');
+                }
+            }
+        });
+
+        function deleteMatters(matterIds) {
+            febs.get(ctx + 'matter/delete/' + matterIds, null, function () {
+                febs.alert.success('删除事务成功');
+
+            });
+        }
+
+        function matterFinish(date) {
+            febs.get(ctx + 'matter/finishCycle/' + date, null, function () {
+                febs.alert.success('修改完成状态');
+
+            });
+        }
+
+    })
+</script>
+<script type="text/html" id="matter-calendar-option">
+    <a lay-event="edit"><i class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
+    <a lay-event="time"><i class="layui-icon febs-edit-area febs-blue">&#xe60e;</i></a>
+    <a lay-event="finish"><i class="layui-icon febs-edit-area febs-blue">&#xe605;</i></a>
+    <a lay-event="del"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+</script>

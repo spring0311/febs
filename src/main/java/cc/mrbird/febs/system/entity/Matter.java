@@ -88,6 +88,18 @@ public class Matter implements Serializable {
     private Long deptId;
 
     /**
+     * 父事项ID
+     */
+    @TableField("PATRIARCH_ID")
+    private Long patriarchId;
+
+    /**
+     * 是否是父事项 0不是1是
+     */
+    @TableField("IS_PATRIARCH")
+    private Integer isPatriarch;
+
+    /**
      *
      */
     @TableField("CREATE_TIME")

@@ -82,7 +82,10 @@ public class CycleController extends BaseController {
     @ControllerEndpoint(operation = "删除执行时间", exceptionMessage = "执行失败")
     @ResponseBody
     public FebsResponse periodDele(@PathVariable("periodId") Long periodId) {
+        QueryWrapper<Period> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("PARENT_ID", periodId);
         this.iPeriodService.removeById(periodId);
+        this.iPeriodService.remove(queryWrapper);
         return new FebsResponse().success();
     }
 
@@ -119,7 +122,8 @@ public class CycleController extends BaseController {
         period.setPeriodOpen(periodOpen);
         period.setPeriodEnd(periodEnd);
         period.setCreateTime(new Date());
-        period.setCycleId((Long) session.getAttribute("cycleId"));
+        period.setParentId((Long) session.getAttribute("periodId"));
+        period.setDeptId((Long) session.getAttribute("deptId"));
         System.err.println("period:" + period);
         this.iPeriodService.saveOrUpdate(period);
         return new FebsResponse().success();

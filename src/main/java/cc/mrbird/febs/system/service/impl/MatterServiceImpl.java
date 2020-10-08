@@ -243,18 +243,13 @@ public class MatterServiceImpl extends ServiceImpl<MatterMapper, Matter> impleme
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void createMatter(Matter matter) throws ParseException {
-        Date date = new Date();
-        matter.setCreateTime(date);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        matter.setEnd(simpleDateFormat.parse(matter.getEndStr()));
-        matter.setMatterOpen(simpleDateFormat.parse(matter.getMatterOpenStr()));
+        matter.setCreateTime(new Date());
+        System.err.println(matter);
         //先行得到用户ID字符串
         String[] userIds = null;
         System.err.println("createMatter:matter:" + matter);
         if (!"".equals(matter.getTeamId())) {
-            System.err.println("If判断开始");
             userIds = getUserIds(matter);
-            System.err.println("If判断结束");
         } else {
             String userId = matter.getUserId();
             userIds = userId.split(",");

@@ -49,7 +49,7 @@ public class AlarmTask implements InitializingBean {
      *
      * @throws ParseException
      */
-    @Scheduled(cron = "0 00 08 * * ?")//触发时间 秒 分 时
+    //@Scheduled(cron = "0 00 08 * * ?")//触发时间 秒 分 时
     public void selectMatterRemind() throws ParseException {
         //得到当前时间的yyyy-MM-dd
         Date date = new Date();
@@ -76,7 +76,7 @@ public class AlarmTask implements InitializingBean {
      *
      * @throws ParseException
      */
-    @Scheduled(cron = "0 00 08 * * ?")
+    //@Scheduled(cron = "0 00 08 * * ?")
     public void endTimeRemind() throws ParseException {
         String date = getDate();
         List<Long> matterIds = matterService.selectMatterIdsByEndTime(date);
@@ -106,7 +106,7 @@ public class AlarmTask implements InitializingBean {
      *
      * @throws ParseException
      */
-    @Scheduled(cron = "0 00 08 * * ?")
+    //@Scheduled(cron = "0 00 08 * * ?")
     public void forEACH() throws ParseException {
         Matter matter = new Matter();
         /**
@@ -396,7 +396,7 @@ public class AlarmTask implements InitializingBean {
     /**
      * 周期定时
      */
-    @Scheduled(cron = "0 00 07 * * ?")
+    //@Scheduled(cron = "0 00 07 * * ?")
     public void cycleMatter() {
         Date now = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd");

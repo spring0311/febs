@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.system.mapper.RemindMapper">
+
+    <!--List<Long> selectMatterId(Date date);-->
+    <select id="selectMatterId" resultType="long" databaseId="oracle">
+        SELECT
+            t.MATTER_ID
+        FROM
+            T_REMIND t
+        WHERE
+            t.REMIND_TIME=#{date}
+    </select>
+
+    <!--TRemind testSelect(@Param("tRemind") TRemind tRemind);-->
+    <select id="testSelect" resultType="cc.mrbird.febs.system.entity.Remind" parameterType="Remind">
+    SELECT
+    REMIND_ID remindId,
+    REMIND_TIME remindTime,
+    MATTER_ID matterId
+    FROM
+    T_REMIND
+    WHERE
+    MATTER_ID = #{tRemind.matterId}
+    </select>
+
+</mapper>

@@ -42,11 +42,11 @@ public class Period implements Serializable {
     private String periodEndStr;
 
     @TableField("CREATE_TIME")
-    @JsonFormat(pattern = "MM-dd", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date createTime;
 
     @TableField("MODIFY_TIME")
-    @JsonFormat(pattern = "MM-dd", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date modifyTime;
 
     @TableField("OPEN_STR")
@@ -54,5 +54,12 @@ public class Period implements Serializable {
 
     @TableField("CYCLE_ID")
     private Long cycleId;
+
+    @TableField("PARENT_ID")
+    private Long parentId;
+
+    @TableField("DEPT_ID")
+    private Long deptId;
+
 
 }

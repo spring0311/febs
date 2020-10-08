@@ -44,7 +44,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
     @Override
     public List<DeptTree<Dept>> findDepts(Dept dept) {
         QueryWrapper<Dept> queryWrapper = new QueryWrapper<>();
-
+        //判断参数不为空
         if (StringUtils.isNotBlank(dept.getDeptName())) {
             queryWrapper.lambda().eq(Dept::getDeptName, dept.getDeptName());
         }
