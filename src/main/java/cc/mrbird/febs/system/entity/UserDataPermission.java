@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
+ * 各种映射表
+ *
  * @author MrBird
  */
 @Data
@@ -15,5 +17,11 @@ public class UserDataPermission {
     private Long userId;
     @TableId("DEPT_ID")
     private Long deptId;
+
+    @TableId("MATTER_ID")
+    private Long matterId;
+
+    @TableId("PERIOD_ID")
+    private Long periodId;
 
 }

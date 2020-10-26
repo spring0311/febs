@@ -91,7 +91,8 @@
         um.ACTUALLY_TIME actuallyTime,
         LISTAGG(u.USER_ID,',') WITHIN GROUP (ORDER BY u.USER_ID) userId,
         LISTAGG(TO_CHAR(u.NAME),',') WITHIN GROUP (ORDER BY TO_CHAR(u.NAME)) AS name,
-        LISTAGG(r.REMIND_ID,',') WITHIN GROUP (ORDER BY r.REMIND_ID) remindId
+        LISTAGG(r.REMIND_ID,',') WITHIN GROUP (ORDER BY r.REMIND_ID) remindId,
+        LISTAGG(udp.PERIOD_ID,',') WITHIN GROUP (ORDER BY udp.PERIOD_ID) cycleIdStr
         FROM
         t_MATTER M
         LEFT JOIN t_DEPT d ON (m.DEPT_ID = d.DEPT_ID)
@@ -99,6 +100,7 @@
         LEFT JOIN t_REMIND r ON (r.MATTER_ID = m.MATTER_ID)
         LEFT JOIN t_USER_MATTER um ON (um.MATTER_ID = m.MATTER_ID)
         LEFT JOIN t_USER u ON (u.USER_ID = um.USER_ID)
+        LEFT JOIN T_USER_DATA_PERMISSION udp ON (m.MATTER_ID = udp.MATTER_ID)
         WHERE 1 = 1
         <if test="matter.matterName != null and matter.matterName != ''">
             AND m.MATTER_NAME like CONCAT(CONCAT('%',#{matter.matterName}),'%')
@@ -154,6 +156,9 @@
         <if test="matter.matterOpenStr != null and matter.matterOpenStr !=''">
             AND TO_CHAR(m.MATTER_OPEN , 'yyyy-MM-dd') = #{matter.matterOpenStr}
         </if>
+        <if test="matter.endStr != null and matter.endStr !=''">
+            AND TO_CHAR(m.END , 'yyyy-MM-dd') = #{matter.endStr}
+        </if>
         <if test="matter.patriarchId != null ">
             AND m.PATRIARCH_ID = #{matter.patriarchId}
         </if>
@@ -205,6 +210,7 @@
             order by um.ACTUALLY_TIME
         </if>
     </sql>
+
 
     <select id="countMatterDetail" parameterType="cc.mrbird.febs.system.entity.Matter" resultType="long"
             databaseId="oracle">
@@ -283,7 +289,16 @@
         from T_MATTER
     </select>
 
-
+    <select id="selectName" resultType="java.lang.String">
+        SELECT
+        LISTAGG(TO_CHAR(u.NAME),',') WITHIN GROUP (ORDER BY TO_CHAR(u.NAME)) AS name
+        FROM
+        t_MATTER M
+        LEFT JOIN t_USER_MATTER um ON (um.MATTER_ID = m.MATTER_ID)
+        LEFT JOIN t_USER u ON (u.USER_ID = um.USER_ID)
+        WHERE 1=1
+        AND m.MATTER_ID = #{matter.matterId}
+    </select>
     <!--<select id="findIdByEach" resultType="java.lang.Long">
         SELECT
         m.MATTER_ID

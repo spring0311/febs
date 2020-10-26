@@ -25,4 +25,6 @@ public interface UserMatterMapper extends BaseMapper<UserMatter> {
 
     List<Long> selectMatterIds(@Param("userId") Long userId);
 
+    String selectName(@Param("tUserMatter") UserMatter tUserMatter);
+
 }

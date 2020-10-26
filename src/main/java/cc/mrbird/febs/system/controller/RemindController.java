@@ -82,7 +82,7 @@ public class RemindController extends BaseController {
     }
 
     @GetMapping("add")
-    @ControllerEndpoint(operation = "时间轴与日历", exceptionMessage = "执行失败")
+    @ControllerEndpoint(operation = "新增提醒时间", exceptionMessage = "执行失败")
     @ResponseBody
     public FebsResponse addRemind(Remind tRemind) throws ParseException {
         tRemindService.addRemind(tRemind);
@@ -98,6 +98,14 @@ public class RemindController extends BaseController {
             remindIds = Long.valueOf(remindId);
         }
         tRemindService.delByRemindId(remindIds);
+        return new FebsResponse().success();
+    }
+
+    @GetMapping("delete")
+    @ControllerEndpoint(operation = "时间轴与日历", exceptionMessage = "执行失败")
+    @ResponseBody
+    public FebsResponse delRemind(Remind remind) {
+        tRemindService.removeById(remind.getRemindId());
         return new FebsResponse().success();
     }
 

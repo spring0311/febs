@@ -4,9 +4,12 @@ import cc.mrbird.febs.common.annotation.ControllerEndpoint;
 import cc.mrbird.febs.common.controller.BaseController;
 import cc.mrbird.febs.common.entity.FebsResponse;
 import cc.mrbird.febs.common.entity.QueryRequest;
+import cc.mrbird.febs.common.exception.FebsException;
 import cc.mrbird.febs.system.entity.Cycle;
+import cc.mrbird.febs.system.entity.Matter;
 import cc.mrbird.febs.system.entity.Period;
 import cc.mrbird.febs.system.service.ICycleService;
+import cc.mrbird.febs.system.service.IMatterService;
 import cc.mrbird.febs.system.service.IPeriodService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -41,6 +44,8 @@ public class CycleController extends BaseController {
     @Autowired
     private final IPeriodService iPeriodService;
 
+    @Autowired
+    private final IMatterService matterService;
 
     @GetMapping("list")
     @ControllerEndpoint(operation = "周期列表", exceptionMessage = "执行失败")
@@ -82,6 +87,12 @@ public class CycleController extends BaseController {
     @ControllerEndpoint(operation = "删除执行时间", exceptionMessage = "执行失败")
     @ResponseBody
     public FebsResponse periodDele(@PathVariable("periodId") Long periodId) {
+        QueryWrapper<Matter> matterQueryWrapper = new QueryWrapper<>();
+        matterQueryWrapper.eq("CYCLE_ID", periodId);
+        Integer line = matterService.count(matterQueryWrapper);
+        if (line > 0) {
+            throw new FebsException("周期被使用!");
+        }
         QueryWrapper<Period> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("PARENT_ID", periodId);
         this.iPeriodService.removeById(periodId);
@@ -125,6 +136,22 @@ public class CycleController extends BaseController {
         period.setParentId((Long) session.getAttribute("periodId"));
         period.setDeptId((Long) session.getAttribute("deptId"));
         System.err.println("period:" + period);
+        QueryWrapper<Period> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("PARENT_ID", period.getParentId());
+        queryWrapper.le("PERIOD_OPEN", period.getPeriodOpen());
+        queryWrapper.ge("PERIOD_END", period.getPeriodOpen());
+        Integer line = iPeriodService.count(queryWrapper);
+        if (line > 0) {
+            throw new FebsException("周期重叠!");
+        }
+        queryWrapper.clear();
+        queryWrapper.eq("PARENT_ID", period.getParentId());
+        queryWrapper.le("PERIOD_OPEN", period.getPeriodEnd());
+        queryWrapper.ge("PERIOD_END", period.getPeriodEnd());
+        line = iPeriodService.count(queryWrapper);
+        if (line > 0) {
+            throw new FebsException("周期重叠!");
+        }
         this.iPeriodService.saveOrUpdate(period);
         return new FebsResponse().success();
     }

@@ -12,31 +12,12 @@
                         <input style="display: none" name="isPatriarch" value="0">
                     </div>
                     <input name="teamId" value="" style="display: none">
-                    <!--<div class="layui-form-item">
-                        <label class="layui-form-label">事务名称</label>
-                        <div class="layui-input-block">
-                            <input type="text" name="matterName" lay-verify="title"
-                                   autocomplete="off" placeholder="请输入工作事务"
-                                   class="layui-input">
-                        </div>
-                    </div>
-
-                    &lt;!&ndash; 工作内容 &ndash;&gt;
-
-                    <div class="layui-form-item layui-form-text">
-                        <label class="layui-form-label">工作内容</label>
-                        <div class="layui-input-block">
-              <textarea name="matterText" placeholder="请输入工作内容"
-                        class="layui-textarea" minlength="2" maxlength="100"></textarea>
-                        </div>
-                    </div>-->
-
                     <div class="layui-form-item">
-                        <label class="layui-form-label">事务名称</label>
+                        <label class="layui-form-label">工作事项</label>
                         <div class="layui-input-block">
-                            <input type="text" name="matterName" lay-verify="title"
-                                   autocomplete="off" placeholder="请输入工作事务"
-                                   class="layui-input" minlength="2" maxlength="20">
+                            <input type="text" name="matterName" lay-verify="required"
+                                   autocomplete="off" placeholder="请输入工作事项"
+                                   class="layui-input" minlength="2" maxlength="30">
                         </div>
                     </div>
                     <!-- 工作内容 -->
@@ -44,7 +25,7 @@
                         <label class="layui-form-label">工作内容</label>
                         <div class="layui-input-block">
               <textarea type="text" name="matterText" placeholder="请输入工作内容"
-                        class="layui-textarea" minlength="2" maxlength="200"></textarea>
+                        class="layui-textarea" minlength="2" maxlength="80"></textarea>
                         </div>
                     </div>
                     <!--<div class="layui-inline">
@@ -82,13 +63,13 @@
                     </div>
                     <!--是否循环-->
                     <div class="layui-form-item">
-                        <label class="layui-form-label">是否循环</label>
+                        <label class="layui-form-label">周期循环</label>
                         <div class="layui-input-block">
                             <input type="radio" name="forEach" value="0" title="否" checked="">
                             <input type="radio" name="forEach" value="1" title="是">
                         </div>
                     </div>
-                    <div class="layui-form-item">
+                    <div class="layui-form-item" style="display: none">
                         <label class="layui-form-label">设置周期：</label>
                         <div class="layui-input-inline">
                             <select name="cycleId"
@@ -137,7 +118,7 @@
                     </div>
 
                     <div class="layui-form-item febs-hide">
-                        <button class="layui-btn" lay-submit="" lay-filter="matter-add-form-submit"
+                        <button class="layui-btn" lay-submit="" lay-filter="matter-add-form-submit-one"
                                 id="submit"></button>
                         <button type="reset" class="layui-btn" id="reset"></button>
                     </div>

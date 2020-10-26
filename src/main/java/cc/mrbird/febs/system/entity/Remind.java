@@ -4,6 +4,7 @@ package cc.mrbird.febs.system.entity;
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import springfox.documentation.service.ApiListing;
 
 import java.util.Date;
 
@@ -28,7 +29,7 @@ public class Remind {
      * 提醒时间yyyy-MM-dd
      */
     @TableField("REMIND_TIME")
-    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @JsonFormat(pattern = "MM-dd", timezone = "GMT+8")
     private Date remindTime;
 
     @TableField(exist = false)
@@ -43,12 +44,34 @@ public class Remind {
     /**
      * 用于查询条件的责任人Id
      */
-    @TableField(exist = false)
+    @TableField("USER_ID")
     private Long userId;
     /**
      * 事项名称
      */
     @TableField(exist = false)
     private Matter tMatter;
+
+    /**
+     * MM-dd
+     */
+    @TableId("REMIND_STR")
+    private String remindStr;
+
+    @TableId("PERIOD_ID")
+    private Long periodId;
+
+    /**
+     * 是否激活 0否1是
+     */
+    @TableId("IS_ACTIVATE")
+    private Integer isActivate;
+
+    /**
+     * 是否用户创建 是否是个人创建 0不是1是
+     */
+    @TableId("USER_BY")
+    private Integer userBy;
+
 
 }

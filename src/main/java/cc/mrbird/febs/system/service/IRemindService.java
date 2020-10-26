@@ -6,7 +6,9 @@ import cc.mrbird.febs.system.entity.Remind;
 import cc.mrbird.febs.common.entity.QueryRequest;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.ui.Model;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -40,7 +42,14 @@ public interface IRemindService extends IService<Remind> {
      *
      * @param str
      */
-    Matter createRemind(String str) throws ParseException;
+    Matter createRemind(String str, HttpServletRequest request, Model model) throws ParseException;
+
+    /**
+     * @param str
+     * @return
+     * @throws ParseException
+     */
+    void cycleRemind(String str) throws ParseException;
 
     /**
      * 修改
@@ -95,6 +104,7 @@ public interface IRemindService extends IService<Remind> {
      * @return
      */
     List<Remind> findAllTReminds(Long userId);
+
     /**
      * 根据提醒时间查询用户的所有信息
      *
@@ -118,6 +128,7 @@ public interface IRemindService extends IService<Remind> {
      * @return
      */
     List<Remind> findRemindForMatter(String remindId);
+
     /**
      * 查询单个Matter的Reminds
      *
@@ -125,8 +136,10 @@ public interface IRemindService extends IService<Remind> {
      * @return
      */
     List<Remind> getBymatterId(Long matterId);
+
     /**
      * 根据remind删除
+     *
      * @param remindId
      */
     void delByRemindId(Long remindId);

@@ -11,7 +11,8 @@
                                     <div class="layui-inline">
                                         <label class="layui-form-label layui-form-label-sm">周期名称</label>
                                         <div class="layui-input-inline">
-                                            <input type="text" name="cycleName" autocomplete="off" class="layui-input">
+                                            <input type="text" name="periodName" autocomplete="off" class="layui-input"
+                                                   minlength="1" maxlength="10">
                                         </div>
                                     </div>
                                 </div>
@@ -73,7 +74,7 @@
                 if (name === 'add') {
                     //resetRoleForm();
                     febs.modal.open('新增周期', 'system/cycle/add', {
-                        btn: ['提交', '重置'],
+                        btn: ['添加', '重置'],
                         //area: $(window).width() <= 750 ? '95%' : '50%',
                         area: $(window).width() <= 750 ? '95%' : '660px',
                         offset: '30px',
@@ -147,6 +148,7 @@
                 febs.modal.view('周期', 'system/cycle/update/' + data.periodId, {
                     btn: ['提交', '取消'],
                     area: $(window).width() <= 750 ? '95%' : '1000px',
+                    offset: '150px',
                     yes: function (index, layero) {
                         $('#cycle-update').find('#submit').trigger('click');
                     },

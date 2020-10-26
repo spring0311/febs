@@ -70,4 +70,12 @@ public class UserMatter implements Serializable {
     @TableField("ACTUALLY_TIME")
     private Date actuallyTime;
 
+
+    @ApiModelProperty(value = "是否根据 总提醒时间修改 0是1不是")
+    @TableId("IS_REMIND")
+    private Integer isRemind;
+
+    @TableField(exist = false)
+    private String name;
+
 }

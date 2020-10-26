@@ -19,6 +19,7 @@ import lombok.Data;
 @KeySequence(value = "T_MATTER_MATTER_ID")
 public class Matter implements Serializable {
 
+
     private static final long serialVersionUID = -1222167740685573379L;
     /**
      * 事务ID
@@ -52,6 +53,7 @@ public class Matter implements Serializable {
      * 结束时间
      */
     @TableField("END")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date end;
 
     @TableField(exist = false)
@@ -235,6 +237,29 @@ public class Matter implements Serializable {
      * 完成时间
      */
     @TableField(exist = false)
-    private Data actuallyTime;
+    private Date actuallyTime;
+
+    /**
+     * 颜色
+     */
+    @TableField(exist = false)
+    private Integer color;
+
+    /**
+     * 是否覆盖原事项,生成新事项
+     * 0否1是
+     */
+    @TableField(exist = false)
+    private Integer cover;
+
+    @TableField(exist = false)
+    private String matterIds;
+
+    @TableField(exist = false)
+    private String overName;
+
+    @TableField(exist = false)
+    private String noOverName;
+
 
 }

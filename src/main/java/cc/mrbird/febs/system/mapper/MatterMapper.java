@@ -48,7 +48,6 @@ public interface MatterMapper extends BaseMapper<Matter> {
     void updateMatterUrgent(Long matterId);
 
     /**
-     *
      * @param date
      * @return
      */
@@ -56,21 +55,24 @@ public interface MatterMapper extends BaseMapper<Matter> {
 
     /**
      * 循环状态ID
+     *
      * @param forEach
      * @param date
      * @return
      */
-    void updateIsOpenByEach(@Param("forEach") Integer forEach , @Param("date") String date);
+    void updateIsOpenByEach(@Param("forEach") Integer forEach, @Param("date") String date);
 
     /**
      * 查询最大Id
+     *
      * @return
      */
     Long findMaxId();
 
     /**
-     *
      * @param date
      */
     void updateIsOpen(String date);
+
+    String selectName(@Param("matter")Matter matter);
 }

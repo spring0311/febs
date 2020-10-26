@@ -154,6 +154,7 @@
 
         matterTable();
 
+
         userTable();
         console.log(currentUser.deptId);
 
@@ -161,14 +162,22 @@
             tableIns = febs.table.init({
                 elem: $view.find('.matterTable'),
                 id: 'matterTable',
-                url: ctx + 'matter/list',
+                url: ctx + 'matter/indexList',
                 cols: [[
-                    {field: 'deptName', title: '归口部门', width: 100},
+                    /*{field: 'deptName', title: '归口部门', width: 100},
                     {field: 'matterName', title: '事务名称', width: 150},
                     {field: 'matterText', title: '工作内容', maxWidth: 100},
                     {field: 'name', title: '责任人', maxWidth: 100},
                     //{field: 'start', title: '开始时间', maxWidth: 100, sort: true},
-                    {field: 'endStr', title: '完成时间', maxWidth: 100, sort: true},
+                    {field: 'endStr', title: '完成时间', maxWidth: 100, sort: true},*/
+                    {field: 'matterName', title: '工作事项', minWidth: 150},
+                    {field: 'matterOpen', title: '开始时间'},
+                    {field: 'end', title: '结束时间'},
+                    //{field: 'name', title: '责任人', width: 200},
+                    {field: 'overName', title: '已完成责任人'},
+                    {field: 'noOverName', title: '未完成责任人'},
+                    {field: 'over', title: '已完成人数'},
+                    {field: 'noOver', title: '未完成人数'},
                 ]]
             });
         }

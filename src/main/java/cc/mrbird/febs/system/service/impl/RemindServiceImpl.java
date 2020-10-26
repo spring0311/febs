@@ -4,10 +4,13 @@ import cc.mrbird.febs.common.entity.QueryRequest;
 import cc.mrbird.febs.common.exception.FebsException;
 import cc.mrbird.febs.system.entity.Matter;
 import cc.mrbird.febs.system.entity.Remind;
+import cc.mrbird.febs.system.entity.User;
+import cc.mrbird.febs.system.entity.UserMatter;
 import cc.mrbird.febs.system.mapper.MatterMapper;
 import cc.mrbird.febs.system.mapper.RemindMapper;
 import cc.mrbird.febs.system.mapper.UserMatterMapper;
 import cc.mrbird.febs.system.service.IRemindService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.annotation.Propagation;
@@ -17,7 +20,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.ui.Model;
+import sun.nio.cs.US_ASCII;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -51,23 +57,25 @@ public class RemindServiceImpl extends ServiceImpl<RemindMapper, Remind> impleme
     public List<Remind> findReminds(Remind remind) {
         LambdaQueryWrapper<Remind> queryWrapper = new LambdaQueryWrapper<>();
         // TODO 设置查询条件
-        Map<String, Object> map = new HashMap<>();
-        map.put("matter_id", remind.getMatterId());
-        List<Remind> reminds = remindMapper.selectByMap(map);
+        queryWrapper.setEntity(remind);
+        List<Remind> reminds = remindMapper.selectList(queryWrapper);
         return reminds;//this.baseMapper.selectList(queryWrapper);
     }
 
+    //IS_ACTIVATE cycleRemind
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Matter createRemind(String string) throws ParseException {
+    public Matter createRemind(String string, HttpServletRequest request, Model model) throws ParseException {
         //拆分为Id与date
         String[] strings = string.split(",");
         String dateStr = strings[0];
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat info = new SimpleDateFormat("MM-dd");
         //remindTime
         Date date = simpleDateFormat.parse(dateStr);
         //matterId
         Long matterId = Long.valueOf(strings[1]);
+        Long userId = Long.valueOf(request.getSession().getAttribute("userId").toString());
         //判断提醒时间是否存在
         Map<String, Object> map = new HashMap<>();
         map.put("MATTER_ID", matterId);
@@ -79,10 +87,59 @@ public class RemindServiceImpl extends ServiceImpl<RemindMapper, Remind> impleme
         Remind remind = new Remind();
         remind.setMatterId(matterId);
         remind.setRemindTime(date);
+        remind.setRemindStr(info.format(date));
+        remind.setUserBy(1);
+        remind.setIsActivate(1);
+        remind.setUserId(userId);
         remindMapper.insert(remind);
         Matter matter = new Matter();
         matter.setMatterId(matterId);
+        changeIsRemind(matterId, userId);
+        resolveMatterModel(matterId, model);
         return matterMapper.findMatterDetail(matter).get(0);
+    }
+
+    private void resolveMatterModel(Long matterId, Model model) {
+        Matter matter = new Matter();
+        matter.setMatterId(matterId);
+        List<Matter> matters = matterMapper.findMatterDetail(matter);
+        //lSystem.err.println(matters.get(0));
+        System.err.println("!!!!!!!!!!!!!!!!!!:" + matters.get(0));
+        model.addAttribute("matterRemind", matters.get(0));
+    }
+
+
+    private void changeIsRemind(Long matterId, Long userId) {
+        QueryWrapper<UserMatter> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("MATTER_ID", matterId);
+        queryWrapper.eq("USER_ID", userId);
+        UserMatter userMatter = new UserMatter();
+        userMatter.setIsRemind(1);
+        userMatterMapper.update(userMatter, queryWrapper);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void cycleRemind(String string) throws ParseException {
+        String[] strings = string.split(",");
+        String dateStr = strings[0];
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd");
+        Date date = simpleDateFormat.parse(dateStr);
+        Long periodId = Long.valueOf(strings[1]);
+        Map<String, Object> map = new HashMap<>();
+        map.put("PERIOD_ID", periodId);
+        map.put("REMIND_TIME", date);
+        List<Remind> reminds = remindMapper.selectByMap(map);
+        if (reminds.size() != 0) {
+            throw new FebsException("提醒时间已存在");
+        }
+        Remind remind = new Remind();
+        remind.setRemindStr(dateStr);
+        remind.setPeriodId(periodId);
+        remind.setRemindTime(date);
+        remind.setIsActivate(0);
+        System.err.println("cycleRemind:" + remind);
+        remindMapper.insert(remind);
     }
 
     @Override

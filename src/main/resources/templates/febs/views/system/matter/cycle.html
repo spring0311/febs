@@ -116,11 +116,12 @@
                                                 <option value="1">降序</option>
                                             </select>
                                         </div>
-                                        <label class="layui-form-label">展示已完成</label>
+                                        <label class="layui-form-label">完成条件</label>
                                         <div class="layui-input-inline">
                                             <select name="finish">
-                                                <option value="0">否</option>
-                                                <option value="2">是</option>
+                                                <option value="0">未完成</option>
+                                                <option value="1">已完成</option>
+                                                <option value="2">全部</option>
                                             </select>
                                         </div>
                                     </div>
@@ -131,14 +132,6 @@
                                         id="query" lay-filter="matter-cycle-form-submit" lay-submit="">
                                     <i class="layui-icon">&#xe848;</i>
                                 </button>
-                                <!-- <button class="layui-btn" lay-submit="" lay-filter="matter-cycle-form-submit"
-                                         id="！submit">
-                                     <i class="layui-icon">&#xe848;</i>
-                                 </button>-->
-                                <!--<div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain  table-action"
-                                     id="reset">
-                                    <i class="layui-icon">&#xe79b;</i>
-                                </div>-->
                             </div>
                         </div>
                     </form>
@@ -151,7 +144,7 @@
     <h1 style="text-align: center"></h1>
     <div>
         <span style="color: black">提示:</span>
-        <<span style="color: #DC143C">重要紧急,</span>
+        <span style="color: #DC143C">重要紧急,</span>
         <span style="color: #FF8C00">重要不紧急,</span>
         <span style="color: #0000FF">不重要紧急,</span>
         <span style="color: #90EE90">不重要不紧急</span>
@@ -164,8 +157,8 @@
 </div>
 </body>
 <script th:src="@{layui/moment.js}" type="text/javascript" charset="utf-8"></script>
-<script th:src="@{layui/jq.js}" type="text/javascript"
-        charset="utf-8"></script>
+<!--<script th:src="@{layui/jq.js}" type="text/javascript"
+        charset="utf-8"></script>-->
 <script data-th-inline="none" type="text/javascript">
     layui.use(['dropdown', 'jquery', 'laydate', 'form', 'table', 'febs'], function () {
         var $ = layui.jquery,
@@ -177,13 +170,13 @@
             $view = $('#febs-cycle'),
             $query = $view.find('#query'),
             $reset = $view.find('#reset'),
-            $searchForm = $view.find('form'),
             sortObject = {field: 'matterName', type: null},
             matterId,
             tableIns;
-        form.render();
+        //form.render();
+        form.render(null, 'cycle-table-form');
 
-        table.on('tool(matterTable)', function (obj) {
+        /*table.on('tool(matterTable)', function (obj) {
             matterId = data.matterId;
             febs.modal.open('修改事务', 'system/matter/update/' + matterId, {
                 area: $(window).width() <= 750 ? '90%' : '50%',
@@ -195,7 +188,9 @@
                     layer.closeAll();
                 }
             });
-        });
+        });*/
+
+        console.log(currentUser.userId);
 
         var status = null;
         var time = null;
@@ -205,6 +200,7 @@
             ajax(data.field);
             return false;
         });
+
 
         function ajax(data) {
             var AJAX_URL = ctx
@@ -234,7 +230,7 @@
                             li.innerHTML = `
 							   <li>
 							   	<p id="${data[i].matterId}" class="fin findId">${time}<span style="display: none">${data[i].matterId}</span></p>
-							   	<div class="con"><p class="finish" id="${data[i].matterId}" style="color: #bbbbbb">${data[i].matterName}</p></div>
+							   	<div class="con"><p class="finish" id="${data[i].matterId}" alt="${data[i].deptId}" style="color: #bbbbbb">${data[i].matterName}</p></div>
 							   </li>
 							   `
                             dom.appendChild(li)
@@ -246,7 +242,7 @@
                                         `
 									   <li>
 									   	<p id="${data[i].matterId}" class="red findId">${time}<span style="display: none">${data[i].matterId}</span></p>
-									   	<div class="con"><p class="finish" id="${data[i].matterId}" style="color: #DC143C">${data[i].matterName}</p></div>
+									   	<div class="con"><p class="finish" id="${data[i].matterId}" alt="${data[i].deptId}" style="color: #DC143C">${data[i].matterName}</p></div>
 									   </li>
 									   `
                                     dom.appendChild(li)
@@ -256,7 +252,7 @@
                                         `
 									   <li>
 									   	<p id="${data[i].matterId}" class="orn findId">${time}<span style="display: none">${data[i].matterId}</span></p>
-									   	<div class="con"><p class="finish" id="${data[i].matterId}" style="color: #FF8C00">${data[i].matterName}</p></div>
+									   	<div class="con"><p class="finish" id="${data[i].matterId}" alt="${data[i].deptId}" style="color: #FF8C00">${data[i].matterName}</p></div>
 									   </li>
 									   `
                                     dom.appendChild(li)
@@ -268,7 +264,7 @@
                                         `
 									   <li>
 									   	<p id="${data[i].matterId}" class="blue findId">${time}<span style="display: none">${data[i].matterId}</span></p>
-									   	<div class="con"><p class="finish" id="${data[i].matterId}" style="color: #0000FF">${data[i].matterName}</p></div>
+									   	<div class="con"><p class="finish" id="${data[i].matterId}" alt="${data[i].deptId}" style="color: #0000FF">${data[i].matterName}</p></div>
 									   </li>
 									   `
                                     dom.appendChild(li)
@@ -278,7 +274,7 @@
                                         `
 									   <li>
 									   	<p id="${data[i].matterId}" class="green findId">${time}<span style="display: none">${data[i].matterId}</span></p>
-									   	<div class="con"><p class="finish" id="${data[i].matterId}" style="color: #90EE90">${data[i].matterName}</p></div>
+									   	<div class="con"><p class="finish" id="${data[i].matterId}" alt="${data[i].deptId}" style="color: #90EE90">${data[i].matterName}</p></div>
 									   </li>
 									   `
                                     dom.appendChild(li)
@@ -293,20 +289,35 @@
         }
 
         $("#listBox").on("click", ".finish", function () {
-            console.log($(this).attr('id'));
             var Id = $(this).attr('id');
-            febs.modal.open('修改事务', 'system/matter/updateOne/' + Id, {
-                area: $(window).width() <= 750 ? '90%' : '50%',
-                btn: ['提交', '取消'],
-                yes: function (index, layero) {
-                    $('#matter-update-one').find('#submit').trigger('click');
-                    layer.closeAll();
-                    $query.click();
-                },
-                btn2: function () {
-                    layer.closeAll();
-                }
-            });
+            var deptId = $(this).attr('alt');
+            if (deptId == 0) {
+                febs.modal.open('修改事务', 'system/matter/updateOne/' + Id, {
+                    area: $(window).width() <= 750 ? '90%' : '50%',
+                    btn: ['提交', '取消'],
+                    yes: function (index, layero) {
+                        $('#matter-update-one').find('#submit').trigger('click');
+                        layer.closeAll();
+                    },
+                    btn2: function () {
+                        layer.closeAll();
+                    }
+                });
+            } else {
+                console.log(Id);
+                febs.modal.open('修改事务', 'system/matter/updateOneIU/' + Id + "/" + currentUser.userId, {
+                    area: $(window).width() <= 750 ? '90%' : '50%',
+                    btn: ['提交', '取消'],
+                    yes: function (index, layero) {
+                        $('#matter-update-one-iu').find('#submit').trigger('click');
+                        layer.closeAll();
+                        ajax(null);
+                    },
+                    btn2: function () {
+                        layer.closeAll();
+                    }
+                });
+            }
         })
         $("#listBox").on("click", ".findId", function () {
             var Id = $(this).attr('id');
@@ -319,6 +330,32 @@
             febs.get(ctx + 'matter/finishCycle/' + date, null, function () {
                 febs.alert.success('修改完成状态');
                 $query.click();
+            });
+        }
+
+        form.on('submit(matter-update-form-submit)', function (data) {
+            updateMatter(data.field)
+            return false;
+        })
+
+        form.on('submit(matter-update-form-submit-iu)', function (data) {
+            console.log(data.field);
+            updateUserMatter(data.field)
+            return false;
+        })
+
+        var updateMatter = function (data) {
+            febs.post(ctx + 'matter/update', data, function () {
+                layer.closeAll();
+                ajax(null);
+                febs.alert.success('修改成功');
+            });
+        }
+
+        var updateUserMatter = function (data) {
+            febs.post(ctx + 'matter/changeUserMatter', data, function () {
+                layer.closeAll();
+                febs.alert.success('修改成功');
             });
         }
 

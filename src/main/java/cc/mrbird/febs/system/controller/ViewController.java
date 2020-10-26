@@ -12,7 +12,9 @@ import cc.mrbird.febs.common.utils.Md5Util;
 import cc.mrbird.febs.monitor.entity.LoginLog;
 import cc.mrbird.febs.monitor.service.ILoginLogService;
 import cc.mrbird.febs.system.entity.*;
+import cc.mrbird.febs.system.mapper.UserMatterMapper;
 import cc.mrbird.febs.system.service.*;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.api.R;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.formula.functions.T;
@@ -51,6 +53,8 @@ public class ViewController extends BaseController {
     @Autowired
     private IUserDataPermissionService userDataPermissionService;
 
+    @Autowired
+    private IPeriodService periodService;
 
     @GetMapping("login")
     @ResponseBody
@@ -246,6 +250,32 @@ public class ViewController extends BaseController {
         return FebsUtil.view("system/matter/matterUpdateOne");
     }
 
+    @GetMapping(FebsConstant.VIEW_PREFIX + "system/matter/updateOneIU/{matterId}/{userId}")
+    @RequiresPermissions("matter:view")
+    public String systemMatterUpdateOneIU(@PathVariable Long matterId, @PathVariable Long userId, Model model) {
+        UserMatter userMatter = new UserMatter();
+        userMatter.setMatterId(matterId);
+        userMatter.setUserId(userId);
+        System.err.println("usermatter!!!!!:" + userMatter);
+        returnUserMatter(userMatter, model);
+        return FebsUtil.view("system/matter/matterUpdateIU");
+    }
+
+    @GetMapping(FebsConstant.VIEW_PREFIX + "system/matter/addOut/{matterId}")
+    @RequiresPermissions("matter:view")
+    public String systemMatterAdder(@PathVariable Long matterId, Model model) {
+        resolveMatterModel(matterId, model, true);
+        return FebsUtil.view("system/matter/matterAddOut");
+    }
+
+    @GetMapping(FebsConstant.VIEW_PREFIX + "system/matter/out/{matterId}")
+    @RequiresPermissions("matter:view")
+    public String systemMatterAdder(@PathVariable Long matterId, HttpServletRequest request) {
+        request.getSession().setAttribute("insertMatterId", matterId);
+        System.err.println("这里这里这里这里这里这里:::" + matterId);
+        return FebsUtil.view("system/matter/matterOut");
+    }
+
     @GetMapping(FebsConstant.VIEW_PREFIX + "system/matter/remind/{matterId}")
     @RequiresPermissions("matter:view")
     public String systemMatterRemindUpdate(@PathVariable Long matterId, Model model) {
@@ -293,6 +323,13 @@ public class ViewController extends BaseController {
     @RequiresPermissions("matter:view")
     public String addCycle() {
         return FebsUtil.view("system/cycle/cycleAdd");
+    }
+
+    @GetMapping(FebsConstant.VIEW_PREFIX + "system/cycle/remind/{periodId}")
+    @RequiresPermissions("matter:view")
+    public String cycleRemindAdd(@PathVariable("periodId") Long periodId, Model model) {
+        cycleRemind(periodId, model, true);
+        return FebsUtil.view("system/cycle/remind");
     }
 
     /**
@@ -413,8 +450,27 @@ public class ViewController extends BaseController {
         Matter matter = new Matter();
         matter.setMatterId(matterId);
         List<Matter> matters = matterService.findMatters(matter);
-        //lSystem.err.println(matters.get(0));
+        System.err.println(matters.get(0));
         model.addAttribute("matter", matters.get(0));
+    }
+
+    @Autowired
+    private final UserMatterMapper userMatterMapper;
+
+    /**
+     * @param userMatter
+     * @param model
+     */
+    private void returnUserMatter(UserMatter userMatter, Model model) {
+        QueryWrapper<UserMatter> queryWrapper = new QueryWrapper<>();
+        queryWrapper.setEntity(userMatter);
+        UserMatter dao = userMatterMapper.selectList(queryWrapper).get(0);
+        model.addAttribute("userMatter", dao);
+    }
+
+    private void cycleRemind(Long periodId, Model model, Boolean transform) {
+        Period period = periodService.getById(periodId);
+        model.addAttribute("period", period);
     }
 
     @Autowired

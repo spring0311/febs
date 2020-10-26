@@ -18,5 +18,6 @@ public class PeriodTree implements Serializable {
 
     private String name;
     private String value;
+    private String disabled;
     private List<PeriodTree> children;
 }

@@ -3,6 +3,9 @@ package cc.mrbird.febs.system.service;
 import cc.mrbird.febs.system.entity.Matter;
 
 import cc.mrbird.febs.common.entity.QueryRequest;
+import cc.mrbird.febs.system.entity.Period;
+import cc.mrbird.febs.system.entity.UserMatter;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.google.common.collect.ListMultimap;
@@ -29,6 +32,14 @@ public interface IMatterService extends IService<Matter> {
     IPage<Matter> findMatters(QueryRequest request, Matter matter);
 
     /**
+     *
+     * @param request
+     * @param matter
+     * @return
+     */
+    IPage<Matter> findMatterOut(QueryRequest request, Matter matter);
+
+    /**
      * 查询（分页）
      *
      * @param request QueryRequest
@@ -51,6 +62,13 @@ public interface IMatterService extends IService<Matter> {
      * @param matter matter
      */
     void createMatter(Matter matter) throws ParseException;
+
+    /**
+     * 新增
+     *
+     * @param matter matter
+     */
+    void createMatterOne(Matter matter) throws ParseException;
 
     /**
      * 修改
@@ -80,6 +98,7 @@ public interface IMatterService extends IService<Matter> {
 
     /**
      * 根据结束时间查询MatterId
+     *
      * @param date
      * @return MatterIds
      */
@@ -87,32 +106,37 @@ public interface IMatterService extends IService<Matter> {
 
     /**
      * 修改循环状态
+     *
      * @param forEach
      * @param date
      * @return
      */
-    void selectMatterIdsByForEach(Integer forEach , String date);
+    void selectMatterIdsByForEach(Integer forEach, String date);
 
     /**
      * 修改IsOpen
+     *
      * @param date
      */
     void updateIsOpen(String date);
 
     /**
      * 完成
+     *
      * @param value
      */
     void finishMatter(String value);
 
     /**
      * 未完成
+     *
      * @param value
      */
     void finishMatterNo(String value);
 
     /**
      * 定时任务修改userMatter的finish
+     *
      * @param matterIds
      */
     void changeFinish(List<Long> matterIds);
@@ -120,11 +144,35 @@ public interface IMatterService extends IService<Matter> {
     /**
      *
      */
-    void copyUserMatter(Long oldMatterId , Long newMatterId);
+    void copyUserMatter(Long oldMatterId, Long newMatterId);
 
     /**
      * 最大Id
+     *
      * @return
      */
     Long maxMatterId();
+
+    /**
+     * @param userMatterQueryWrapper
+     * @return
+     */
+    List<UserMatter> findUserMatters(QueryWrapper<UserMatter> userMatterQueryWrapper);
+
+
+    /**
+     * 自动创建事项时,赋予提醒时间
+     *
+     * @param period id
+     * @param newId
+     */
+    void copyReminds(Period period, Long newId);
+
+    /**
+     * 复制
+     *
+     * @param matterId
+     * @param userId
+     */
+    void userMatter(Long oldId, Long matterId, Long userId);
 }

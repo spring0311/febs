@@ -15,7 +15,7 @@
                             <div class="layui-col-md10">
                                 <div class="layui-form-item">
                                     <div class="layui-inline">
-                                        <label class="layui-form-label">事务名称</label>
+                                        <label class="layui-form-label">工作事项</label>
                                         <div class="layui-input-inline">
                                             <input type="text" name="matterName"
                                                    class="layui-input">
@@ -62,21 +62,16 @@
                                     </div>
                                 </div>
                             </div>
-                            <div
-                                    class="layui-col-md2 layui-col-sm12 layui-col-xs12 table-action-area">
-                                <div
-                                        class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain  table-action"
-                                        id="query">
+                            <div class="layui-col-md2 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain  table-action"
+                                     id="query">
                                     <i class="layui-icon">&#xe848;</i>
                                 </div>
-                                <div
-                                        class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain  table-action"
-                                        id="reset">
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain  table-action"
+                                     id="reset">
                                     <i class="layui-icon">&#xe79b;</i>
                                 </div>
-                                <div
-                                        class="layui-btn layui-btn-sm layui-btn-primary table-action action-more"
-                                >
+                                <div class="layui-btn layui-btn-sm layui-btn-primary table-action action-more">
                                     <i class="layui-icon">&#xe875;</i>
                                 </div>
                             </div>
@@ -115,6 +110,17 @@
     }}
     <span class="layui-badge febs-bg-{{urgent.color}}">{{ urgent.title }}</span>
 </script>
+<script type="text/html" id="matter-color">
+    {{#
+    var color = {
+    1: {title: '重要紧急', color: 'volcano'},
+    2: {title: '重要不紧急', color: 'orange'},
+    3: {title: '不重要紧急', color: 'blue'},
+    4: {title: '不重要不紧急', color: 'lime'}
+    }[d.color];
+    }}
+    <span class="layui-badge febs-bg-{{color.color}}">{{ color.title }}</span>
+</script>
 <script type="text/html" id="matter-each">
     {{#
     var forEach = {
@@ -129,6 +135,7 @@
         <span class="layui-badge-dot febs-bg-orange"></span> 无权限
     </span>
     <a lay-event="edit"><i class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
+    <a lay-event="out"><i class="layui-icon febs-edit-area febs-blue">&#xe63c;</i></a>
     <a lay-event="time"><i class="layui-icon febs-edit-area febs-blue">&#xe60e;</i></a>
     <a lay-event="del"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
 </script>
@@ -160,9 +167,9 @@
             });
         }
 
-
         $query.on('click', function () {
             var params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            console.log(params);
             tableIns.reload({where: params, page: {curr: 1}});
         });
 
@@ -179,13 +186,18 @@
                 if (name === 'add') {
                     febs.modal.open('新增事务', 'system/matter/add', {
                         btn: ['提交', '重置'],
-                        area: $(window).width() <= 750 ? '80%' : '60%',
+                        area: [$(window).width() <= 750 ? '80%' : '60%', $(window).height() <= 1000 ? '80%' : '60%'],
                         yes: function (index, layero) {
+                            sessionRemove();
                             $('#matter-add').find('#submit').trigger('click');
                         },
                         btn2: function () {
+                            sessionRemove();
                             $('#matter-add').find('#reset').trigger('click');
                             return false;
+                        },
+                        end: function () {
+                            sessionRemove();
                         }
                     });
                 }
@@ -200,7 +212,6 @@
                                 //console.log(item);
                                 deleteMatters(item.matterId); //.join(',')
                             });
-
                         });
                     }
                 }
@@ -226,6 +237,13 @@
             }*/]
         });
 
+        function sessionRemove() {
+            febs.get(ctx + 'period/sessionDel', null, function () {
+                // console.log("deptId:" + deptId);
+                console.log("OK");
+            })
+        }
+
         table.on('tool(matterTable)', function (obj) {
             var data = obj.data,
                 layEvent = obj.event;
@@ -249,12 +267,30 @@
             }
             if (layEvent === 'time') {
                 matterId = data.matterId;
-                febs.modal.open(data.matterName + ',提示时间设置', 'system/matter/remind/' + matterId, {
+                if (data.isOpen == 0) {
+                    febs.modal.open(data.matterName + ',生成事项日程单', 'system/matter/addOut/' + matterId, {
+                        area: [$(window).width() <= 750 ? '90%' : '50%'],
+                        btn: ['提交', '取消'],
+                        yes: function (index, layero) {
+                            $('#matter-addOut').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                } else {
+                    febs.alert.success('事项已关闭!');
+                }
+            }
+            if (layEvent === 'out') {
+                matterId = data.matterId;
+                febs.modal.open(data.matterName + ',事项日程单', 'system/matter/out/' + matterId, {
                     area: $(window).width() <= 750 ? '90%' : '50%',
-                    btn: ['提交', '取消'],
-                    yes: function (index, layero) {
-                        $('#matter-remind').find('#submit').trigger('click');
-                    },
+                    btn: ['取消'],
+                    offset: '200px',
+                    /*yes: function (index, layero) {
+                        closeMatters();
+                    },*/
                     btn2: function () {
                         layer.closeAll();
                     }
@@ -273,6 +309,11 @@
             });
         });
 
+        function closeMatters() {
+            console.log('点击!!!!!!');
+
+        }
+
         function initTable() {
             tableIns = febs.table.init({
                 elem: $view.find('table'),
@@ -281,44 +322,20 @@
                 cols: [[
                     {type: 'checkbox'},
                     //{field: deptName('deptId'), title: '归口部门', width: 100},
-                    {field: 'matterName', title: '事务名称', width: 100},
+                    {field: 'deptName', title: '归口部门', width: 100},
+                    {field: 'matterName', title: '工作事项', width: 150},
                     {field: 'matterText', title: '工作内容'},
-                    {field: 'name', title: '责任人', maxWidth: 200},
-                    {field: 'cycleName', title: '周期', width: 90, sort: true},
-                    //{field: 'remindTime', title: '提醒时间', maxWidth: 180, sort: true},
-                    {field: 'matterOpenStr', title: '开始时间', width: 150, sort: true},
-                    {field: 'endStr', title: '完成时间', width: 150, sort: true},
-                    {title: '是否重要', templet: '#matter-important', width: 90},
-                    {title: '是否紧急', templet: '#matter-urgent', width: 90},
+                    {field: 'name', title: '责任人', width: 200},
+                    {field: 'period', title: '周期', width: 100},
+                    {title: '重要紧急', templet: '#matter-color', width: 120},
                     {title: '状态', templet: '#matter-open', width: 72},
                     {title: '循环', templet: '#matter-each', width: 72},
                     //{field: 'createTime', title: '创建时间', minWidth: 180, sort: true},
                     // {title: '状态', templet: '#job-status'},
-                    {title: '操作', toolbar: '#matter-option', width: 130}
+                    {title: '操作', toolbar: '#matter-option', width: 160}
                 ]]
             });
         }
-
-
-        /*  selectTable = febs.table.init({
-              elem: $view.find('table'),
-              id: 'matterTable',
-              url: ctx + 'matter/list',
-              cols: [[
-                  {type: 'checkbox'},
-                  //{field: deptName('deptId'), title: '归口部门', width: 100},
-                  {field: 'matterName', title: '事项名称', width: 100},
-                  {field: 'matterText', title: '工作内容'},
-                  {field: 'name', title: '责任人', maxWidth: 200},
-                  {field: 'period', title: '完成周期', width: 100, sort: true},
-                  //{field: 'remindTime', title: '提醒时间', maxWidth: 180, sort: true},
-                  {field: 'end', title: '完成时间', maxWidth: 200, sort: true},
-                  {title: '状态', templet: '#matter-open', width: 80},
-                  //{field: 'createTime', title: '创建时间', minWidth: 180, sort: true},
-                  // {title: '状态', templet: '#job-status'},
-                  {title: '操作', toolbar: '#job-option', width: 130}
-              ]]
-          });*/
 
 
         function deptName(deptId) {
@@ -343,12 +360,17 @@
 
         form.on('submit(matter-add-form-submit)', function (data) {
             addMatter(data.field);
-            $query.click();
+            //$query.click();
             return false;
         });
 
         form.on('submit(matter-update-form-submit)', function (data) {
             updateMatter(data.field)
+            return false;
+        })
+
+        form.on('submit(matter-addOut-form-submit)', function (data) {
+            addOutMatter(data.field)
             return false;
         })
 
@@ -358,21 +380,39 @@
         })
 
         var addMatter = function (data) {
-            febs.post(ctx + 'matter/add', data, function () {
-                layer.closeAll();
-                console.log(data);
-                febs.alert.success('新增成功');
-                $query.trigger('click');
-            });
             /*   }*/
+            if (data.userId == '' && data.teamId == '') {
+                febs.alert.success('请选择责任人与责任小组!');
+            } else {
+                febs.post(ctx + 'matter/add', data, function () {
+                    layer.closeAll();
+                    $query.trigger('click');
+                    febs.alert.success('新增成功');
+                });
+            }
+
         }
 
         var updateMatter = function (data) {
+            if (data.userId == '' && data.teamId == '') {
+                febs.alert.success('请选择责任人与责任小组!');
+            } else {
+                febs.post(ctx + 'matter/update', data, function () {
+                    layer.closeAll();
+                    febs.alert.success('修改成功');
+                    $query.trigger('click');
+                    $('#febs-matter').find('#reset').click();
+                });
+            }
+
+        }
+
+        var addOutMatter = function (data) {
             //console.log(matterId);
             // console.log(data);
-            febs.post(ctx + 'matter/update', data, function () {
+            febs.post(ctx + 'matter/addOut', data, function () {
                 layer.closeAll();
-                febs.alert.success('修改成功');
+                febs.alert.success('生成成功');
                 $query.trigger('click');
                 $('#febs-matter').find('#reset').click();
 

@@ -43,4 +43,17 @@
     AND
     um.FINISH = 0
     </select>
+
+    <select id="selectName" resultType="java.lang.String">
+        Select
+        LISTAGG(TO_CHAR(u.NAME),',') WITHIN GROUP (ORDER BY TO_CHAR(u.NAME)) AS name
+        from
+        T_USER_MATTER um
+        LEFT JOIN t_USER u ON (um.USER_ID = u.USER_ID)
+        WHERE
+        um.Finish = #{tUserMatter.finish}
+        AND um.MATTER_ID = #{tUserMatter.matterId}
+    </select>
+
+
 </mapper>

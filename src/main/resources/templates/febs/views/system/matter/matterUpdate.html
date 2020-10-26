@@ -8,13 +8,17 @@
                     <div style="display: none">
                         <input name="matterId">
                     </div>
-
                     <div class="layui-form-item">
-                        <label class="layui-form-label">事务名称</label>
-                        <div class="layui-input-block">
+                        <label class="layui-form-label">工作事项</label>
+                        <div class="layui-input-block layui-input-inline">
                             <input type="text" name="matterName" lay-verify="title"
-                                   autocomplete="off" placeholder="请输入工作事务"
-                                   class="layui-input" minlength="2" maxlength="20">
+                                   autocomplete="off" placeholder="请输入工作事项"
+                                   class="layui-input" minlength="2" maxlength="30">
+                        </div>
+                        <label class="layui-form-label ">开启状态</label>
+                        <div class="layui-input-block layui-input-inline">
+                            <input type="radio" name="isOpen" value="0" title="正常" checked="">
+                            <input type="radio" name="isOpen" value="1" title="暂停">
                         </div>
                     </div>
                     <!-- 工作内容 -->
@@ -22,62 +26,37 @@
                         <label class="layui-form-label">工作内容</label>
                         <div class="layui-input-block">
               <textarea type="text" name="matterText" placeholder="请输入工作内容"
-                        class="layui-textarea" minlength="2" maxlength="200"></textarea>
+                        class="layui-textarea" minlength="2" maxlength="80"></textarea>
                         </div>
                     </div>
-                    <!-- 状态开关 -->
-                    <!-- <div class="layui-form-item">
-                      <label class="layui-form-label">状态:</label>
-                      <div class="layui-input-block">
-                        <input type="checkbox" checked="" name="open"
-                          lay-skin="switch" lay-filter="febs-form-group-switch"
-                          lay-text="开|关">
-                      </div>
-                    </div> -->
 
                     <!-- 是否重要 -->
+                    <div class=""></div>
                     <div class="layui-form-item">
                         <label class="layui-form-label">是否重要</label>
-                        <div class="layui-input-block">
-                            <input type="radio" name="important" value="0" title="否"
-                                   checked=""> <input type="radio" name="important"
-                                                      value="1" title="是">
-
+                        <div class="layui-input-block layui-input-inline">
+                            <input type="radio" name="important" value="0" title="否" checked="">
+                            <input type="radio" name="important" value="1" title="是">
                         </div>
-                    </div>
-
-                    <!-- 是否重复 -->
-                    <div class="layui-form-item">
                         <label class="layui-form-label">是否紧急</label>
-                        <div class="layui-input-block">
-                            <input type="radio" name="urgent" value="0" title="否"
-                                   checked=""> <input type="radio" name="urgent"
-                                                      value="1" title="是">
-
+                        <div class="layui-input-block layui-input-inline">
+                            <input type="radio" name="urgent" value="0" title="否" checked="">
+                            <input type="radio" name="urgent" value="1" title="是">
                         </div>
                     </div>
                     <!--是否循环-->
                     <div class="layui-form-item">
-                        <label class="layui-form-label">是否循环</label>
+                        <label class="layui-form-label">是否重复</label>
                         <div class="layui-input-block">
                             <input type="radio" name="forEach" value="0" title="否">
                             <input type="radio" name="forEach" value="1" title="是">
                         </div>
                     </div>
-                    <div class="layui-form-item">
-                        <!-- febs-form-item-require -->
-                        <label class="layui-form-label">开启状态</label>
-                        <div class="layui-input-block">
-                            <input type="radio" name="isOpen" value="0" title="正常">
-                            <input type="radio" name="isOpen" value="1" title="暂停">
-                        </div>
-                    </div>
                     <!-- 责任人 -->
                     <div class="layui-form-item">
-                        <label class="layui-form-label febs-form-item-require">责任人：</label>
+                        <label class="layui-form-label">责任人：</label>
                         <div class="layui-input-block">
                             <select name="userId"
-                                    lay-verify="required"
                                     xm-select-direction="down"
                                     xm-select="matter-update-user"
                                     xm-select-skin="default">
@@ -99,84 +78,12 @@
                         <label class="layui-form-label ">设置周期：</label>
                         <div class="layui-input-block">
                             <select name="cycleIdStr"
-
                                     xm-select-direction="down"
                                     xm-select="matter-cycle-update"
-                                    xm-select-skin="default"
-                                    xm-select-max="1">
-                            </select>
-                        </div>
-                    </div>
-
-                    <!--z责任小组-->
-                    <!--<div class="layui-form-item">
-                        <label class="layui-form-label">责任小组：</label>
-                        <div class="layui-input-block">
-                            <select name="teamId"
-                                    xm-select-direction="down"
-                                    xm-select="matter-update-team"
                                     xm-select-skin="default">
                             </select>
                         </div>
-                    </div>-->
-
-                    <!-- <div class="layui-form-item">
-                      <div class="layui-input-block">
-                        <button class="layui-btn" lay-submit=""
-                          lay-filter="febs-form-group-submit">+ 新增</button>
-                      </div>
-                    </div> -->
-
-
-                    <!-- 日程初始化 -->
-
-                    <!--<div class="layui-form-item">
-                        <div class="layui-input-block">
-                            <button class="layui-btn" lay-submit=""
-                                    lay-filter="febs-form-group-submit">日程初始化
-                            </button>
-                        </div>
-                    </div>-->
-
-                    <!-- 开始时间 -->
-                    <div class="layui-inline">
-                        <label class="layui-form-label">开始时间</label>
-                        <div class="layui-input-inline">
-                            <input type="datetime" name="matterOpenStr" id="febs-form-group-date-1"
-                                   lay-verify="date" placeholder="开始时间" autocomplete="off"
-                                   class="layui-input" pattern="yyyy-MM-dd">
-                        </div>
                     </div>
-                    <!-- 结束时间 -->
-                    <div class="layui-inline">
-                        <label class="layui-form-label">结束时间</label>
-                        <div class="layui-input-inline">
-                            <input type="datetime" name="endStr" id="febs-form-group-date-2"
-                                   lay-verify="date" placeholder="结束时间" autocomplete="off"
-                                   class="layui-input" pattern="yyyy-MM-dd">
-                        </div>
-                    </div>
-                    <!-- 提醒日期 -->
-                    <!-- <div class="layui-inline">
-                         <label class="layui-form-label">提醒时间</label>
-                         <div class="layui-input-inline">
-                             <input type="datetime" name="" id="febs-form-group-date-3"
-                                    lay-verify="date" placeholder="提醒时间" autocomplete="off"
-                                    class="layui-input" pattern="yyyy-MM-dd">
-                         </div>
-                     </div>-->
-                    <!-- -->
-
-                    <!--     取消 保存 保存并且提交
-
-                        <div class="layui-form-item">
-                          <div class="layui-input-block">
-                            <button type="button" class="layui-btn layui-btn-primary">取消</button>
-                            <button type="button" class="layui-btn layui-btn-primary">保存</button>
-                            <button class="layui-btn" lay-submit=""
-                              lay-filter="febs-form-group-submit">保存并提交</button>
-                          </div>
-                        </div> -->
 
                     <div class="layui-form-item febs-hide">
                         <button class="layui-btn" lay-submit="" lay-filter="matter-update-form-submit"
@@ -190,7 +97,6 @@
 </div>
 
 <script data-th-inline="javascript" type="text/javascript">
-
     layui.use(['febs', 'form', 'formSelects', 'validate', 'treeSelect', 'eleTree', 'laydate'], function () {
         var $ = layui.$,
             febs = layui.febs,
@@ -205,6 +111,7 @@
             $submit = $view.find('#submit'),
             laydate = layui.laydate,
             matter = [[${matter}]],
+            selectIsOpen,
             validate = layui.validate;
         //console.log(matter);
         initMatterValue();
@@ -343,33 +250,35 @@
         });
 
         formSelects.config('matter-cycle-update', {
-            searchUrl: ctx + 'cycle/all',
+            searchUrl: ctx + 'period/tree',
             response: {
                 statusCode: 200
             },
-            beforeSuccess: function (id, url, searchVal, result) {
+            linkage: true,
+            success: function (id, url, searchVal, result) {
                 var data = result.data;
-                var tranData = [];
-                //console.log(data);
-                for (var i = 0; i < data.length; i++) {
-                    //  console.log(data[i].name);
-                    tranData.push({
-                        name: data[i].cycleName,
-                        value: data[i].cycleId,
-                    })
-                    console.log(data[i].cycleId);
-                }
-                result.data = tranData;
+                console.log(data);
+                result.data = data;
                 return result;
             },
             success: function () {
-                console.log(matter.cycleId);
-                var cao = matter.cycleId.toString();
+                console.log(matter.cycleIdStr);
+                var cao = matter.cycleIdStr.toString();
                 formSelects.value('matter-cycle-update', cao.split(","));
             },
             error: function (id, url, searchVal, err) {
                 console.error(err);
-                febs.alert.error('获取小组列表失败');
+                febs.alert.error('获取周期列表失败');
+            }
+        });
+
+        var isFirst = true;
+
+        layui.formSelects.opened('matter-cycle-update', function (id) {
+            selectIsOpen = 1;
+            if (isFirst) {
+                isFirst = false;
+                $('[fs_id="matter-cycle-update"]').find('.xm-cz i.icon-caidan').click();
             }
         });
 

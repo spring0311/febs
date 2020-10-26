@@ -16,7 +16,7 @@
                             <div class="layui-col-md10">
                                 <div class="layui-form-item">
                                     <div class="layui-inline">
-                                        <label class="layui-form-label">事务名称</label>
+                                        <label class="layui-form-label">工作事项</label>
                                         <div class="layui-input-inline">
                                             <input type="text" name="matterName"
                                                    autocomplete="off" class="layui-input">
@@ -106,6 +106,17 @@
     }}
     <span class="layui-badge febs-bg-{{urgentOne.color}}">{{ urgentOne.title }}</span>
 </script>
+<script type="text/html" id="matter-color">
+    {{#
+    var color = {
+    1: {title: '重要紧急', color: 'volcano'},
+    2: {title: '重要不紧急', color: 'orange'},
+    3: {title: '不重要紧急', color: 'blue'},
+    4: {title: '不重要不紧急', color: 'lime'}
+    }[d.color];
+    }}
+    <span class="layui-badge febs-bg-{{color.color}}">{{ color.title }}</span>
+</script>
 <script type="text/html" id="matter-forEach">
     {{#
     var forEach = {
@@ -193,7 +204,6 @@
                         });
                     }
                 }
-
                 if (name === 'export') {
                     var params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
                     params.pageSize = $view.find(".layui-laypage-limits option:selected").val();
@@ -205,11 +215,11 @@
                 name: 'add',
                 title: '新增个人事务',
                 perms: 'matter:view'
-            }, /*{
-                name: 'export',
-                title: '导出Excel',
-                perms: 'job:export'
-            }*/]
+            }, {
+                name: 'delete',
+                title: '批量删除事务',
+                perms: 'matter:view'
+            }]
         });
 
         table.on('tool(matterTableOne)', function (obj) {
@@ -217,7 +227,7 @@
                 layEvent = obj.event;
             if (layEvent === 'del') {
                 deptId = data.deptId;
-                if (data.deptId == null) {
+                if (data.deptId == 0) {
                     febs.modal.confirm('删除任务', '确定删除该任务？', function () {
                         deleteMatters(data.matterId);
                     });
@@ -241,7 +251,7 @@
             if (layEvent === 'edit') {
                 matterId = data.matterId;
                 deptId = data.deptId;
-                if (data.deptId == null) {
+                if (data.deptId == 0) {
                     febs.modal.open('修改事务', 'system/matter/updateOne/' + matterId, {
                         area: $(window).width() <= 750 ? '90%' : '50%',
                         btn: ['提交', '取消'],
@@ -253,26 +263,28 @@
                         }
                     });
                 } else {
-                    febs.alert.success('没有修改此事务的权限');
-                }
-            }
-            if (layEvent === 'time') {
-                matterId = data.matterId;
-                deptId = data.deptId;
-                if (data.deptId == null) {
-                    febs.modal.open(data.matterName + ',提示时间设置', 'system/matter/remind/' + matterId, {
+                    febs.modal.open('修改事务', 'system/matter/updateOneIU/' + matterId + "/" + currentUser.userId, {
                         area: $(window).width() <= 750 ? '90%' : '50%',
                         btn: ['提交', '取消'],
                         yes: function (index, layero) {
-                            $('#matter-remind').find('#submit').trigger('click');
+                            $('#matter-update-one-iu').find('#submit').trigger('click');
                         },
                         btn2: function () {
                             layer.closeAll();
                         }
                     });
-                } else {
-                    febs.alert.success('没有修改此事务的权限');
                 }
+            }
+            if (layEvent === 'time') {
+                matterId = data.matterId;
+                deptId = data.deptId;
+                febs.modal.open(data.matterName + ',提示时间设置', 'system/matter/remind/' + matterId, {
+                    area: $(window).width() <= 750 ? '90%' : '50%',
+                    btn: ['取消'],
+                    btn2: function () {
+                        layer.closeAll();
+                    }
+                });
             }
         });
 
@@ -295,15 +307,12 @@
                 cols: [[
                     //{type: 'checkbox'},
                     //{field: deptName('deptId'), title: '归口部门', width: 100},
-                    {field: 'matterName', title: '事务名称', width: 100},
                     {field: 'deptName', title: '归口部门', width: 100},
+                    {field: 'matterName', title: '工作事项', width: 200},
                     {field: 'matterText', title: '工作内容'},
-                    {field: 'cycleName', title: '周期', width: 90, sort: true},
                     {field: 'matterOpenStr', title: '开始时间', width: 200, sort: true},
                     {field: 'endStr', title: '完成时间', width: 200, sort: true},
-                    {title: '是否重要', templet: '#matter-importantOne', width: 90},
-                    {title: '是否紧急', templet: '#matter-urgentOne', width: 90},
-                    {title: '是否循环', templet: '#matter-forEach', width: 90},
+                    {title: '重要紧急', templet: '#matter-color', width: 120},
                     {title: '完成状态', templet: '#matter-finish', width: 90},
                     //{field: 'createTime', title: '创建时间', minWidth: 180, sort: true},
                     // {title: '状态', templet: '#job-status'},
@@ -348,8 +357,8 @@
             return params;
         }
 
-        form.on('submit(matter-add-form-submit)', function (data) {
-            addMatter(data.field);
+        form.on('submit(matter-add-form-submit-one)', function (data) {
+            addMatterOne(data.field);
             return false;
         });
 
@@ -358,13 +367,19 @@
             return false;
         })
 
+        form.on('submit(matter-update-form-submit-iu)', function (data) {
+            console.log(data.field);
+            updateUserMatter(data.field)
+            return false;
+        })
+
         form.on('submit(matter-remind-update-submit)', function (data) {
             updateMatterRemind(data.field)
             return false;
         })
 
-        var addMatter = function (data) {
-            febs.post(ctx + 'matter/add', data, function () {
+        var addMatterOne = function (data) {
+            febs.post(ctx + 'matter/addOne', data, function () {
                 layer.closeAll();
                 febs.alert.success('新增成功');
                 $query.trigger('click');
@@ -373,6 +388,15 @@
 
         var updateMatter = function (data) {
             febs.post(ctx + 'matter/update', data, function () {
+                layer.closeAll();
+                febs.alert.success('修改成功');
+                $query.trigger('click');
+
+            });
+        }
+
+        var updateUserMatter = function (data) {
+            febs.post(ctx + 'matter/changeUserMatter', data, function () {
                 layer.closeAll();
                 febs.alert.success('修改成功');
                 $query.trigger('click');

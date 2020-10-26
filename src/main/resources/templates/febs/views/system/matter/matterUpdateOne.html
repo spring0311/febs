@@ -9,11 +9,11 @@
                         <input name="matterId">
                     </div>
                     <div class="layui-form-item">
-                        <label class="layui-form-label">事务名称</label>
+                        <label class="layui-form-label">工作事项</label>
                         <div class="layui-input-block">
                             <input type="text" name="matterName" lay-verify="title"
-                                   autocomplete="off" placeholder="请输入工作事务"
-                                   class="layui-input" minlength="2" maxlength="20">
+                                   autocomplete="off" placeholder="请输入工作事项"
+                                   class="layui-input" minlength="2" maxlength="30">
                         </div>
                     </div>
                     <!-- 工作内容 -->
@@ -21,7 +21,7 @@
                         <label class="layui-form-label">工作内容</label>
                         <div class="layui-input-block">
               <textarea type="text" name="matterText" placeholder="请输入工作内容"
-                        class="layui-textarea" minlength="2" maxlength="200"></textarea>
+                        class="layui-textarea" minlength="2" maxlength="80"></textarea>
                         </div>
                     </div>
 
@@ -71,7 +71,7 @@
                     </div>
                     <!--是否循环-->
                     <div class="layui-form-item">
-                        <label class="layui-form-label">是否循环</label>
+                        <label class="layui-form-label">周期循环</label>
                         <div class="layui-input-block">
                             <input type="radio" name="forEach" value="0" title="否">
                             <input type="radio" name="forEach" value="1" title="是">
@@ -98,18 +98,17 @@
                         </div>
                     </div>
 
-                    <div class="layui-form-item">
-                        <label class="layui-form-label ">设置周期：</label>
-                        <div class="layui-input-block">
-                            <select name="cycleIdStr"
-
-                                    xm-select-direction="down"
-                                    xm-select="matter-cycle-update-one"
-                                    xm-select-skin="default"
-                                    xm-select-max="1">
-                            </select>
-                        </div>
-                    </div>
+                    <!-- <div class="layui-form-item">
+                         <label class="layui-form-label ">设置周期：</label>
+                         <div class="layui-input-block">
+                             <select name="cycleIdStr"
+                                     xm-select-direction="down"
+                                     xm-select="matter-cycle-update-one"
+                                     xm-select-skin="default"
+                                     xm-select-max="1">
+                             </select>
+                         </div>
+                     </div>-->
 
                     <!-- <div class="layui-form-item">
                       <div class="layui-input-block">
@@ -147,28 +146,6 @@
                                    class="layui-input" pattern="yyyy-MM-dd">
                         </div>
                     </div>
-                    <!-- 提醒日期 -->
-                    <!-- <div class="layui-inline">
-                         <label class="layui-form-label">提醒时间</label>
-                         <div class="layui-input-inline">
-                             <input type="datetime" name="" id="febs-form-group-date-3"
-                                    lay-verify="date" placeholder="提醒时间" autocomplete="off"
-                                    class="layui-input" pattern="yyyy-MM-dd">
-                         </div>
-                     </div>-->
-                    <!-- -->
-
-                    <!--     取消 保存 保存并且提交
-
-                        <div class="layui-form-item">
-                          <div class="layui-input-block">
-                            <button type="button" class="layui-btn layui-btn-primary">取消</button>
-                            <button type="button" class="layui-btn layui-btn-primary">保存</button>
-                            <button class="layui-btn" lay-submit=""
-                              lay-filter="febs-form-group-submit">保存并提交</button>
-                          </div>
-                        </div> -->
-
                     <div class="layui-form-item febs-hide">
                         <button class="layui-btn" lay-submit="" lay-filter="matter-update-form-submit"
                                 id="submit"></button>

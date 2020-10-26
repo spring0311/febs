@@ -61,5 +61,14 @@ public class Period implements Serializable {
     @TableField("DEPT_ID")
     private Long deptId;
 
+    @TableId("REMIND")
+    private String remind;
+
+    @TableField(exist = false)
+    private String orAnd;
+
+    @TableField(exist = false)
+    private String cycleIdStr;
+
 
 }

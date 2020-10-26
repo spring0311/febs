@@ -84,3 +84,6 @@ logging:
           core:
             metadata:
               TableInfoHelper: error
+
+day:
+  value: 15
