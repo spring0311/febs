@@ -1,0 +1,433 @@
+<div class="layui-fluid layui-anim febs-anim" lay-title="新增事务"
+     id="matter-add">
+    <div class="layui-row febs-container">
+        <div class="layui-card">
+            <div class="layui-card-body" style="padding: 15px;">
+                <form class="layui-form" action="" lay-filter="febs-form-group">
+                    <!-- 工作事项 -->
+                    <div>
+                        <input style="display: none" name="deptId">
+                    </div>
+                    <div>
+                        <input style="display: none" name="isPatriarch" value="1">
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">工作事项</label>
+                        <div class="layui-input-block layui-input-inline">
+                            <input type="text" name="matterName" lay-verify="required"
+                                   autocomplete="off" placeholder="请输入工作事项"
+                                   class="layui-input" minlength="2" maxlength="30">
+                        </div>
+                        <label class="layui-form-label ">开启状态</label>
+                        <div class="layui-input-block layui-input-inline">
+                            <input type="radio" name="isOpen" value="0" title="正常" checked="">
+                            <input type="radio" name="isOpen" value="1" title="暂停">
+                        </div>
+                    </div>
+                    <!-- 工作内容 -->
+                    <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label">工作内容</label>
+                        <div class="layui-input-block">
+              <textarea type="text" name="matterText" placeholder="请输入工作内容"
+                        class="layui-textarea" minlength="2" maxlength="80"></textarea>
+                        </div>
+                    </div>
+                    <!--<div class="layui-form-item">
+                        <label class="layui-form-label">事务周期</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="period" lay-verify="title" autocomplete="off" placeholder="请输入事务周期"
+                                   class="layui-input">
+                        </div>
+                    </div>-->
+                    <!--<div class="layui-inline">
+                        <label class="layui-form-label">事务周期</label>
+                        <div class="layui-input-inline">
+                            <select name="period">
+                                <option value="">不开启</option>
+                                <option value="月">月</option>
+                                <option value="季度">季度</option>
+                                <option value="半年">半年</option>
+                                <option value="年">年</option>
+                            </select>
+                        </div>
+                    </div>-->
+                    <!-- 是否重要 -->
+                    <div class=""></div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">是否重要</label>
+                        <div class="layui-input-block layui-input-inline">
+                            <input type="radio" name="important" value="0" title="否" checked="">
+                            <input type="radio" name="important" value="1" title="是">
+                        </div>
+                        <label class="layui-form-label">是否紧急</label>
+                        <div class="layui-input-block layui-input-inline">
+                            <input type="radio" name="urgent" value="0" title="否" checked="">
+                            <input type="radio" name="urgent" value="1" title="是">
+                        </div>
+                    </div>
+                    <!-- 是否紧急 -->
+                    <!--<div class="layui-form-item">
+                    </div>-->
+                    <!--是否循环-->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">是否重复</label>
+                        <div class="layui-input-block layui-input-inline">
+                            <input type="radio" name="forEach" value="0" title="否" checked="">
+                            <input type="radio" name="forEach" value="1" title="是">
+                        </div>
+                    </div>
+                    <!--<div class="layui-form-item">
+                        <label class="layui-form-label ">开启状态</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="isOpen" value="0" title="正常" checked="">
+                            <input type="radio" name="isOpen" value="1" title="暂停">
+                        </div>
+                    </div>-->
+                    <!-- 责任人 febs-form-item-require  lay-verify="required"-->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label ">责任人：</label>
+                        <div class="layui-input-block">
+                            <select name="userId"
+                                    xm-select-direction="down"
+                                    xm-select="matter-update-user-add"
+                                    xm-select-skin="default">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">责任小组：</label>
+                        <div class="layui-input-block">
+                            <select name="teamId"
+                                    xm-select-direction="down"
+                                    xm-select="matter-update-team-add"
+                                    xm-select-skin="default">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label febs-form-item-require">设置周期：</label>
+                        <div class="layui-input-block">
+                            <select name="cycleIdStr"
+                                    xm-select-direction="down"
+                                    xm-select="matter-cycle-add"
+                                    xm-select-skin="default"
+                                    lay-verify="required">
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <!-- 开始时间 -->
+                    <!--<div class="layui-inline">
+                        <label class="layui-form-label">开始时间</label>
+                        <div class="layui-input-inline">
+                            <input type="datetime" name="matterOpenStr" id="febs-form-group-date-1"
+                                   lay-verify="date" placeholder="开始时间" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    &lt;!&ndash; 结束时间 &ndash;&gt;
+                    <div class="layui-inline">
+                        <label class="layui-form-label">结束时间</label>
+                        <div class="layui-input-inline">
+                            <input type="datetime" name="endStr" id="febs-form-group-date-2"
+                                   lay-verify="date" placeholder="结束时间" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>-->
+                    <div class="layui-form-item febs-hide">
+                        <button class="layui-btn" lay-submit="" lay-filter="matter-add-form-submit"
+                                id="submit"></button>
+                        <button type="reset" class="layui-btn" id="reset"></button>
+                    </div>
+                </form>
+                <table lay-filter="matterPeriodTable" lay-data="{id: 'matterPeriodTable'}"></table>
+                <!--<div class="layui-form-item">
+                    <label class="layui-form-label">周期：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="deptId" id="matter-add-peri" class="layui-input">
+                    </div>
+                </div>-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['febs', 'form', 'laydate', 'formSelects', 'tree', 'eleTree', 'treeSelect', 'table'], function () {
+        var $ = layui.$,
+            febs = layui.febs,
+            element = layui.element,
+            tree = layui.tree,
+            formSelects = layui.formSelects,
+            table = layui.table,
+            eleTree = layui.eleTree,
+            treeSelect = layui.treeSelect,
+            layer = layui.layer,
+            $view = $('#matter-add'),
+            laydate = layui.laydate,
+            sortObject = {field: 'createTime', type: null},
+            createTimeFrom,
+            parent,
+            selectIsOpen,
+            createTimeTo,
+            form = layui.form,
+            $searchForm = $view.find('form'),
+            tableInit;
+
+
+        initMatterValue();
+
+        initTable();
+
+
+        function initMatterValue() {
+            form.val("febs-form-group", {
+                "deptId": currentUser.deptId,
+            });
+        }
+
+        form.render(null, 'febs-form-group');
+
+        laydate.render({
+            elem: '#febs-form-group-date-1',
+            format: "yyyy-MM-dd",
+            value: new Date(),
+        });
+        laydate.render({
+            elem: '#febs-form-group-date-2',
+            format: "yyyy-MM-dd",
+        });
+        laydate.render({
+            elem: '#febs-form-group-date-3',
+            format: "yyyy-MM-dd",
+        });
+
+        /* 自定义验证规则 */
+        form.verify({
+            title: function (value) {
+                if (value.length < 0) {
+                    return '名称不为空';
+                }
+            },
+            /*  pass: [/(.+){6,12}$/, '密码必须6到12位'],
+             content: function (value) {
+                 layedit.sync(editIndex);
+             } */
+        });
+
+        /* 监听指定开关 */
+        form.on('switch(febs-form-group-switch)', function (data) {
+            febs.alert.info('开关checked：' + (this.checked ? 'true' : 'false'));
+            /*  layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis) */
+        });
+
+        /* 监听提交 */
+        form.on('submit(febs-form-group-submit)', function (data) {
+            layer.alert(JSON.stringify(data.field), {});
+            return false;
+        });
+
+        //role
+        formSelects.config('user-add-role', {
+            searchUrl: ctx + 'role',
+            response: {
+                statusCode: 200
+            },
+            beforeSuccess: function (id, url, searchVal, result) {
+                var data = result.data;
+                var tranData = [];
+                for (var i = 0; i < data.length; i++) {
+                    tranData.push({
+                        name: data[i].roleName,
+                        value: data[i].roleId
+                    })
+                }
+                result.data = tranData;
+                return result;
+            },
+            error: function (id, url, searchVal, err) {
+                console.error(err);
+                febs.alert.error('获取角色列表失败');
+            }
+        });
+
+
+        formSelects.config('matter-update-user-add', {
+            searchUrl: ctx + 'user/all',
+            response: {
+                statusCode: 200
+            },
+            keyChildren: 'children',
+            beforeSuccess: function (id, url, searchVal, result) {
+                var data = result.data;
+                var tranData = [];
+                //console.log(data);
+                for (var i = 0; i < data.length; i++) {
+                    //console.log(data[i].name);
+                    tranData.push({
+                        name: data[i].name,
+                        value: data[i].userId,
+                        selected: "",
+                        disabled: ""
+                    })
+                }
+                result.data = tranData;
+                return result;
+            },
+            error: function (id, url, searchVal, err) {
+                console.error(err);
+                febs.alert.error('获取用户列表失败');
+            }
+        });
+
+        formSelects.config('matter-update-team-add', {
+            searchUrl: ctx + 'team',
+            response: {
+                statusCode: 200
+            },
+            beforeSuccess: function (id, url, searchVal, result) {
+                var data = result.data;
+                var tranData = [];
+                //console.log(data);
+                for (var i = 0; i < data.length; i++) {
+                    //  console.log(data[i].name);
+                    tranData.push({
+                        name: data[i].teamName,
+                        value: data[i].teamId
+                    })
+                }
+                result.data = tranData;
+                return result;
+            },
+            error: function (id, url, searchVal, err) {
+                console.error(err);
+                febs.alert.error('获取小组列表失败');
+            }
+        });
+
+        formSelects.config('matter-cycle-add', {
+            searchUrl: ctx + 'period/tree',
+            response: {
+                statusCode: 200
+            },
+            linkage: true,
+            success: function (id, url, searchVal, result) {
+                var data = result.data;
+                parent = data;
+                result.data = data;
+                return result;
+            },
+            error: function (id, url, searchVal, err) {
+                console.error(err);
+                febs.alert.error('获取周期列表失败');
+            }
+        });
+
+        var isFirst = true;
+
+        layui.formSelects.opened('matter-cycle-add', function (id) {
+            selectIsOpen = 1;
+            if (isFirst) {
+                isFirst = false;
+                $('[fs_id="matter-cycle-add"]').find('.xm-cz i.icon-caidan').click();
+            }
+        });
+
+        var number = 0;
+
+        //var object = null;
+        var periodIds = '';
+        formSelects.on('matter-cycle-add', function (id, vals, val, isAdd, isDisabled) {
+            //id:           点击select的id
+            //vals:         当前select已选中的值
+            //val:          当前select点击的值
+            //isAdd:        当前操作选中or取消
+            //isDisabled:   当前选项是否是disabled
+            console.log(val);
+            //禁止选中父选项
+            for (var i = 0; i < parent.length; i++) {
+                if (parent[i].value === val.value) {
+                    return false;
+                }
+                ;
+            }
+            //
+            periodIds = '';
+            var object = vals;
+            if (isAdd) {
+                object.push(val);
+            } else if (!isAdd) {
+                for (var i = 0; i < object.length; i++) {
+                    if (val.value === object[i].value) {
+                        object.splice(i, 1);
+                        break;
+                    }
+                }
+            }
+            for (var i = 0; i < object.length; i++) {
+                periodIds = periodIds + object[i].value.toString() + ",";
+            }
+            periodIds = periodIds.slice(0, periodIds.length - 1);
+            console.log(periodIds);
+            if (!isAdd && selectIsOpen === 0) {
+                console.log('判断');
+                console.log(selectIsOpen);
+                sessionIn(periodIds);
+                var params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+                tableInit.reload({where: params, page: {curr: 1}});
+            }
+            return true;
+        });
+
+        formSelects.closed('matter-cycle-add', function (id) {
+            sessionIn(periodIds);
+            tableInit.reload({where: {}, page: {curr: 1}});
+            console.log("执行");
+            var params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableInit.reload({where: params, page: {curr: 1}});
+            selectIsOpen = 0;
+        });
+
+        function getQueryParams() {
+            var params = $searchForm.serializeJson();
+            var createTime = params.time;
+            if (createTime) {
+                createTimeFrom = createTime.split(' - ')[0];
+                createTimeTo = createTime.split(' - ')[1];
+            }
+            params.invalidate_ie_cache = new Date();
+            params.createTimeFrom = createTimeFrom;
+            params.createTimeTo = createTimeTo;
+            return params;
+        }
+
+
+        function initTable() {
+            tableInit = febs.table.init({
+                elem: $view.find('table'),
+                id: 'testTable',
+                url: ctx + 'period/showList',
+                cols: [[
+                    {field: 'periodName', title: '名称', width: 100},
+                    {field: 'periodOpen', title: '开始时间', maxWidth: 200},
+                    {field: 'periodEnd', title: '结束时间', maxWidth: 200},
+                    {field: 'remind', title: '提醒时间', maxWidth: 200},
+                    //{title: '操作', toolbar: '#matter-option', width: 130}
+                ]]
+            });
+        }
+
+        function sessionIn(ids) {
+            if (ids == null || ids == '') {
+                febs.get(ctx + 'period/sessionDel', null, function () {
+                })
+            } else {
+                febs.get(ctx + 'period/sessionIn/' + ids, null, function () {
+                })
+            }
+        }
+
+
+    });
+</script>

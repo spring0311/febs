@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.system.mapper.UserMapper">
+    <sql id="countUserDetailSql" databaseId="oracle">
+        SELECT
+        COUNT(1)
+        FROM
+        T_USER u
+        WHERE 1 = 1
+        <if test="user.username != null and user.username != ''">
+            AND u.USERNAME = #{user.username}
+        </if>
+        <if test="user.deptId != null and user.deptId != ''">
+            AND u.DEPT_ID = #{user.deptId}
+        </if>
+        <if test="user.sex != null and user.sex != ''">
+            AND u.SEX = #{user.sex}
+        </if>
+        <if test="user.status != null and user.status != ''">
+            AND u.STATUS = #{user.status}
+        </if>
+        <if test="user.name != null and user.name != ''">
+            AND u.NAME = #{user.name}
+        </if>
+        <if test="user.mobile != null and user.mobile != ''">
+            AND u.MOBILE = #{user.mobile}
+        </if>
+        <if test="user.createTimeFrom != null and user.createTimeFrom !=''">
+            And u.CREATE_TIME &gt; #{user.createTimeFrom}
+        </if>
+        <if test="user.createTimeTo!= null and user.createTimeTo !=''">
+            And u.CREATE_TIME &lt; #{user.createTimeTo}
+        </if>
+    </sql>
+
+    <sql id="findUserDetailSql" databaseId="oracle">
+        SELECT
+        u.USER_ID userId,
+        u.USERNAME,
+        u.EMAIL,
+        u.MOBILE,
+        u.POST,
+        u.USER_EMPNO userEmpno,
+        u.STATUS,
+        u.CREATE_TIME createTime,
+        u.SSEX sex,
+        u.DEPT_ID deptId,
+        u.LAST_LOGIN_TIME lastLoginTime,
+        u.MODIFY_TIME modifyTime,
+        u.NAME,
+        u.AVATAR,
+        d.DEPT_NAME deptName,
+        LISTAGG(r.ROLE_ID,',') WITHIN GROUP (ORDER BY r.ROLE_ID) AS roleId,
+        LISTAGG(TO_CHAR(r.ROLE_NAME),',') WITHIN GROUP (ORDER BY TO_CHAR(r.ROLE_NAME)) AS roleName
+        FROM
+        T_USER u
+        LEFT JOIN T_DEPT d ON (u.DEPT_ID = d.DEPT_ID)
+        LEFT JOIN T_USER_ROLE ur ON (u.USER_ID = ur.USER_ID)
+        LEFT JOIN T_ROLE r ON (r.ROLE_ID = ur.ROLE_ID)
+        WHERE 1 = 1
+        <if test="user.username != null and user.username != ''">
+            AND u.USERNAME = #{user.username}
+        </if>
+        <if test="user.deptId != null and user.deptId != ''">
+            AND d.DEPT_ID = #{user.deptId}
+        </if>
+        <if test="user.sex != null and user.sex != ''">
+            AND u.SEX = #{user.sex}
+        </if>
+        <if test="user.status != null and user.status != ''">
+            AND u.STATUS = #{user.status}
+        </if>
+        <if test="user.name != null and user.name != ''">
+            AND u.NAME  like CONCAT(CONCAT('%',#{user.name}),'%')
+        </if>
+        <if test="user.mobile != null and user.mobile != ''">
+            AND u.MOBILE = #{user.mobile}
+        </if>
+        <if test="user.userEmpno != null and user.userEmpno != ''">
+            AND u.USER_EMPNO = #{user.userEmpno}
+        </if>
+        <if test="user.createTimeFrom != null and user.createTimeFrom !=''">
+            And u.CREATE_TIME &gt; #{user.createTimeFrom}
+        </if>
+        <if test="user.createTimeTo!= null and user.createTimeTo !=''">
+            And u.CREATE_TIME &lt; #{user.createTimeTo}
+        </if>
+        GROUP BY
+        u.USER_ID ,
+        u.USERNAME,
+        u.EMAIL,
+        u.MOBILE,
+        u.POST,
+        u.USER_EMPNO ,
+        u.STATUS,
+        u.CREATE_TIME ,
+        u.SSEX,
+        u.DEPT_ID ,
+        u.LAST_LOGIN_TIME ,
+        u.MODIFY_TIME ,
+        u.NAME,
+        u.AVATAR,
+        d.DEPT_NAME
+    </sql>
+
+    <select id="countUserDetail" parameterType="user" resultType="long" databaseId="oracle">
+        <include refid="countUserDetailSql"/>
+    </select>
+
+    <select id="findUserDetailPage" parameterType="user" resultType="cc.mrbird.febs.system.entity.User" databaseId="oracle">
+        <include refid="findUserDetailSql"/>
+    </select>
+
+    <select id="findUserDetail" parameterType="user" resultType="cc.mrbird.febs.system.entity.User" databaseId="oracle">
+        <include refid="findUserDetailSql"/>
+    </select>
+
+    <select id="findByName" parameterType="string" resultType="cc.mrbird.febs.system.entity.User" databaseId="oracle">
+        SELECT
+        u.USER_ID userId,
+        u.USERNAME,
+        u.EMAIL,
+        u.MOBILE,
+        u.PASSWORD,
+        u.STATUS,
+        u.CREATE_TIME createTime,
+        u.SSEX sex,
+        u.DEPT_ID deptId,
+        u.LAST_LOGIN_TIME lastLoginTime,
+        u.MODIFY_TIME modifyTime,
+        u.NAME,
+        u.POST,
+        u.USER_EMPNO userEmpno,
+        u.AVATAR,
+        u.THEME,
+        u.IS_TAB isTab,
+        d.DEPT_NAME deptName,
+        LISTAGG(r.ROLE_ID,',') WITHIN GROUP (ORDER BY r.ROLE_ID) AS roleId,
+        LISTAGG(TO_CHAR(r.ROLE_NAME),',') WITHIN GROUP (ORDER BY TO_CHAR(r.ROLE_NAME)) AS roleName
+        FROM
+        T_USER u
+        LEFT JOIN T_DEPT d ON (u.DEPT_ID = d.DEPT_ID)
+        LEFT JOIN T_USER_ROLE ur ON (u.USER_ID = ur.USER_ID)
+        LEFT JOIN T_ROLE r ON (r.ROLE_ID = ur.ROLE_ID)
+        WHERE  u.USERNAME = #{username}
+        GROUP BY
+        u.USER_ID ,
+        u.USERNAME,
+        u.EMAIL,
+        u.MOBILE,
+        u.PASSWORD,
+        u.STATUS,
+        u.CREATE_TIME ,
+        u.SSEX ,
+        u.DEPT_ID ,
+        u.LAST_LOGIN_TIME ,
+        u.MODIFY_TIME ,
+        u.NAME,
+        u.POST,
+        u.USER_EMPNO ,
+        u.AVATAR,
+        u.THEME,
+        u.IS_TAB ,
+        d.DEPT_NAME
+    </select>
+
+    <select id="findUserDataPermissions" parameterType="long" resultType="userDataPermission" databaseId="oracle">
+        select USER_ID userId, DEPT_ID deptId from T_USER_DATA_PERMISSION
+        where USER_ID = #{userId}
+    </select>
+
+    <!--List<User> findTeamForUsers(Integer teamId);-->
+    <select id="findTeamForUsers" databaseId="oracle" resultType="cc.mrbird.febs.system.entity.User">
+        SELECT
+            u.USER_ID userId,
+            u.NAME
+        FROM
+            T_USER u
+        LEFT JOIN T_USER_TEAM  ut ON(u.USER_ID = ut.USER_ID)
+        WHERE
+            ut.TEAM_ID=${teamId}
+        GROUP BY
+            u.USER_ID;
+    </select>
+
+    <select id="findMaxUserId" resultType="java.lang.Long">
+        select max(to_number(USER_ID))
+        from t_user
+    </select>
+</mapper>

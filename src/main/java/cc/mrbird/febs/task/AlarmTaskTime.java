@@ -35,8 +35,8 @@ public class AlarmTaskTime implements InitializingBean {
 
     private final IUserDataPermissionService iUserDataPermissionService;
 
-    @Value("${day.value}")
-    private int addDay;
+    /*@Value("${day.value}")
+    private int addDay;*/
 
     public AlarmTaskTime(IRemindService iRemindService, IMatterService matterService, ICycleService iCycleService, IPeriodService iPeriodService, IUserDataPermissionService iUserDataPermissionService) {
         this.iRemindService = iRemindService;
@@ -232,8 +232,7 @@ public class AlarmTaskTime implements InitializingBean {
         date = simpleDateFormat.parse(time);*/
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);
-        calendar.add(calendar.DATE, addDay);
-        System.err.println("addDay:" + addDay);
+        calendar.add(calendar.DATE, 15);
         date = calendar.getTime();
         String end = simpleDateFormat.format(date);
         return end;

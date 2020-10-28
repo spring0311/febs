@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.monitor.mapper.LoginLogMapper">
+    <select id="findTotalVisitCount" resultType="long" databaseId="oracle">
+        select count(1) from T_LOGIN_LOG
+    </select>
+
+    <select id="findTodayVisitCount" resultType="long" databaseId="oracle">
+        SELECT count(1)
+        FROM T_LOGIN_LOG
+        WHERE LOGIN_TIME
+        between SYSDATE
+        and SYSDATE+1
+    </select>
+
+    <select id="findTodayIp" resultType="long" databaseId="oracle">
+        SELECT count(DISTINCT(ip))
+        FROM T_LOGIN_LOG
+        WHERE LOGIN_TIME
+        between SYSDATE
+        and SYSDATE+1
+    </select>
+
+    <select id="findLastSevenDaysVisitCount" resultType="map" parameterType="string" databaseId="oracle">
+        select
+        TO_CHAR(l.LOGIN_TIME, 'MM-dd') DAYS,
+        count(1) count
+        from
+        (
+        select
+        *
+        from
+        T_LOGIN_LOG
+        where
+        SYSDATE+10 >= LOGIN_TIME) l
+        where 1 = 1
+        <if test="username != null and username != ''">
+            and l.USERNAME = #{username}
+        </if>
+        group by
+        TO_CHAR(l.LOGIN_TIME, 'MM-dd')
+    </select>
+</mapper>

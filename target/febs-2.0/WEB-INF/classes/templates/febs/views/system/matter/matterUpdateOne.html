@@ -1,0 +1,329 @@
+<div class="layui-fluid layui-anim febs-anim" lay-title="修改事务"
+     id="matter-update-one">
+    <div class="layui-row febs-container">
+        <div class="layui-card">
+            <div class="layui-card-body" style="padding: 15px;">
+                <form class="layui-form" action="" lay-filter="febs-form-group" id="form-matter">
+                    <!-- 工作事项 -->
+                    <div style="display: none">
+                        <input name="matterId">
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">工作事项</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="matterName" lay-verify="title"
+                                   autocomplete="off" placeholder="请输入工作事项"
+                                   class="layui-input" minlength="2" maxlength="30">
+                        </div>
+                    </div>
+                    <!-- 工作内容 -->
+                    <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label">工作内容</label>
+                        <div class="layui-input-block">
+              <textarea type="text" name="matterText" placeholder="请输入工作内容"
+                        class="layui-textarea" minlength="2" maxlength="80"></textarea>
+                        </div>
+                    </div>
+
+                    <!--                    <div class="layui-inline">-->
+                    <!--                        <label class="layui-form-label">事务周期</label>-->
+                    <!--                        <div class="layui-input-inline">-->
+                    <!--                            <select name="period">-->
+                    <!--                                <option value="">不开启</option>-->
+                    <!--                                <option value="月">月</option>-->
+                    <!--                                <option value="季度">季度</option>-->
+                    <!--                                <option value="半年">半年</option>-->
+                    <!--                                <option value="年">年</option>-->
+                    <!--                            </select>-->
+                    <!--                        </div>-->
+                    <!--                    </div>-->
+
+                    <!-- 状态开关 -->
+                    <!-- <div class="layui-form-item">
+                      <label class="layui-form-label">状态:</label>
+                      <div class="layui-input-block">
+                        <input type="checkbox" checked="" name="open"
+                          lay-skin="switch" lay-filter="febs-form-group-switch"
+                          lay-text="开|关">
+                      </div>
+                    </div> -->
+
+                    <!-- 是否重要 -->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">是否重要</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="important" value="0" title="否"
+                                   checked=""> <input type="radio" name="important"
+                                                      value="1" title="是">
+
+                        </div>
+                    </div>
+
+                    <!-- 是否重复 -->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">是否紧急</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="urgent" value="0" title="否"
+                                   checked=""> <input type="radio" name="urgent"
+                                                      value="1" title="是">
+
+                        </div>
+                    </div>
+                    <!--是否循环-->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">周期循环</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="forEach" value="0" title="否">
+                            <input type="radio" name="forEach" value="1" title="是">
+                        </div>
+                    </div>
+                    <div class="layui-form-item" style="display: none">
+                        &lt;!&ndash; febs-form-item-require &ndash;&gt;
+                        <label class="layui-form-label">开启状态</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="isOpen" value="0" title="正常">
+                            <input type="radio" name="isOpen" value="1" title="暂停">
+                        </div>
+                    </div>
+                    <!-- 责任人 -->
+                    <div class="layui-form-item" style="display: none">
+                        <label class="layui-form-label febs-form-item-require">责任人：</label>
+                        <div class="layui-input-block">
+                            <select name="userId"
+                                    lay-verify="required"
+                                    xm-select-direction="down"
+                                    xm-select="matter-update-user"
+                                    xm-select-skin="default">
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- <div class="layui-form-item">
+                         <label class="layui-form-label ">设置周期：</label>
+                         <div class="layui-input-block">
+                             <select name="cycleIdStr"
+                                     xm-select-direction="down"
+                                     xm-select="matter-cycle-update-one"
+                                     xm-select-skin="default"
+                                     xm-select-max="1">
+                             </select>
+                         </div>
+                     </div>-->
+
+                    <!-- <div class="layui-form-item">
+                      <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit=""
+                          lay-filter="febs-form-group-submit">+ 新增</button>
+                      </div>
+                    </div> -->
+
+
+                    <!-- 日程初始化 -->
+
+                    <!--<div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" lay-submit=""
+                                    lay-filter="febs-form-group-submit">日程初始化
+                            </button>
+                        </div>
+                    </div>-->
+
+                    <!-- 开始时间 -->
+                    <div class="layui-inline">
+                        <label class="layui-form-label">开始时间</label>
+                        <div class="layui-input-inline">
+                            <input type="datetime" name="matterOpenStr" id="febs-form-group-date-1"
+                                   lay-verify="date" placeholder="开始时间" autocomplete="off"
+                                   class="layui-input" pattern="yyyy-MM-dd">
+                        </div>
+                    </div>
+                    <!-- 结束时间 -->
+                    <div class="layui-inline">
+                        <label class="layui-form-label">结束时间</label>
+                        <div class="layui-input-inline">
+                            <input type="datetime" name="endStr" id="febs-form-group-date-2"
+                                   lay-verify="date" placeholder="结束时间" autocomplete="off"
+                                   class="layui-input" pattern="yyyy-MM-dd">
+                        </div>
+                    </div>
+                    <div class="layui-form-item febs-hide">
+                        <button class="layui-btn" lay-submit="" lay-filter="matter-update-form-submit"
+                                id="submit"></button>
+                        <button type="reset" class="layui-btn" id="reset"></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script data-th-inline="javascript" type="text/javascript">
+    layui.use(['febs', 'form', 'formSelects', 'validate', 'treeSelect', 'eleTree', 'laydate'], function () {
+        var $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            formSelects = layui.formSelects,
+            treeSelect = layui.treeSelect,
+            form = layui.form,
+            eleTree = layui.eleTree,
+            $view = $('#matter-update-one'),
+            $query = $view.find('#query'),
+            $reset = $view.find('#reset'),
+            $submit = $view.find('#submit'),
+            laydate = layui.laydate,
+            matter = [[${matter}]],
+            validate = layui.validate;
+        //console.log(matter);
+        initMatterValue();
+        form.verify(validate);
+        formSelects.render();
+        form.render();
+        //console.log(matter);
+
+        //var dateStart = (matter.start).Format("yyyy-MM-dd");
+        //dateStart = format(matter.start, 'yyyy-MM-dd');
+        //console.log(dateStart)
+        //var dateEnd = (matter.end).Format("yyyy-MM-dd");
+        //dateEnd = format(matter.end, 'yyyy-MM-dd');
+
+        //console.log(dateEnd);
+        var start = new Date(matter.matterOpen);
+        var end = new Date(matter.end);
+
+        laydate.render({
+            elem: '#febs-form-group-date-1',
+            value: start,
+            format: "yyyy-MM-dd",
+        });
+        laydate.render({
+            elem: '#febs-form-group-date-2',
+            value: end,
+            format: "yyyy-MM-dd",
+        });
+
+        /* laydate.render({
+             elem: '#febs-form-group-date-3',
+             format: "yyyy-MM-dd",
+         });*/
+
+        function initMatterValue() {
+            form.val("febs-form-group", {
+                "matterId": matter.matterId,
+                "matterName": matter.matterName,
+                "matterId": matter.matterId,
+                "period": matter.period,
+                "matterText": matter.matterText,
+                "important": matter.important,
+                "urgent": matter.urgent,
+                "forEach": matter.forEach,
+                "isOpen": matter.isOpen,
+            });
+        }
+
+        form.render(null, 'febs-form-group');
+
+
+        /* 自定义验证规则 */
+        form.verify({
+            title: function (value) {
+                if (value.length < 0) {
+                    return '名称不为空';
+                }
+            },
+            /*  pass: [/(.+){6,12}$/, '密码必须6到12位'],
+             content: function (value) {
+                 layedit.sync(editIndex);
+             } */
+        });
+
+        /* 监听指定开关 */
+        form.on('switch(febs-form-group-switch)', function (data) {
+            febs.alert.info('开关checked：' + (this.checked ? 'true' : 'false'));
+            /*  layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis) */
+        });
+
+        /* /!* 监听提交 *!/
+         form.on('submit(febs-form-group-submit)', function (data) {
+             layer.alert(JSON.stringify(data.field), {});
+             return false;
+         });
+ */
+        //role
+        formSelects.config('matter-update-user', {
+            searchUrl: ctx + 'user/all',
+            response: {
+                statusCode: 200
+            },
+            beforeSuccess: function (id, url, searchVal, result) {
+                var data = result.data;
+                var tranData = [];
+                //console.log(data);
+                for (var i = 0; i < data.length; i++) {
+                    //console.log(data[i].name);
+                    tranData.push({
+                        name: data[i].name,
+                        value: data[i].userId
+                    })
+                }
+                result.data = tranData;
+                return result;
+            },
+            success: function () {
+                formSelects.value('matter-update-user', matter.userId.split(','));
+                console.log(matter.userId);
+            },
+            error: function (id, url, searchVal, err) {
+                console.error(err);
+                febs.alert.error('获取用户列表失败');
+            }
+        });
+
+        formSelects.config('matter-cycle-update-one', {
+            searchUrl: ctx + 'cycle/all',
+            response: {
+                statusCode: 200
+            },
+            beforeSuccess: function (id, url, searchVal, result) {
+                var data = result.data;
+                var tranData = [];
+                //console.log(data);
+                for (var i = 0; i < data.length; i++) {
+                    //  console.log(data[i].name);
+                    tranData.push({
+                        name: data[i].cycleName,
+                        value: data[i].cycleId,
+                    })
+                }
+                result.data = tranData;
+                return result;
+            },
+            success: function () {
+                var cao = matter.cycleId.toString();
+                formSelects.value('matter-cycle-update-one', cao.split(","));
+            },
+            error: function (id, url, searchVal, err) {
+                console.error(err);
+                febs.alert.error('获取小组列表失败');
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    function dateFtt(fmt, date) {
+        var o = {
+            "M+": date.getMonth() + 1,                 //月份
+            "d+": date.getDate(),                    //日
+            "h+": date.getHours(),                   //小时
+            "m+": date.getMinutes(),                 //分
+            "s+": date.getSeconds(),                 //秒
+            "q+": Math.floor((date.getMonth() + 3) / 3), //季度
+            "S": date.getMilliseconds()             //毫秒
+        };
+        if (/(y+)/.test(fmt))
+            fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt))
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
+</script>

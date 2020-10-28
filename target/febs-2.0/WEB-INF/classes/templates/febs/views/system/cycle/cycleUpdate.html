@@ -1,0 +1,192 @@
+<div class="layui-fluid layui-anim febs-anim" lay-title="修改事务"
+     id="cycle-update">
+    <div class="layui-row febs-container">
+        <div class="layui-card">
+            <div class="layui-card-body" style="padding: 15px;">
+                <form class="layui-form" action="" lay-filter="febs-form-group-cycle" id="form-matter">
+                    <!--<div class="layui-inline">
+                        <label class="layui-form-label febs-form-item-require">子周期</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="periodName" autocomplete="off"
+                                   class="layui-input" minlength="1" maxlength="10"
+                                   lay-verify="range">
+                        </div>
+                    </div>-->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label febs-form-item-require">子周期名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="periodName" autocomplete="off"
+                                   class="layui-input" minlength="1" maxlength="10"
+                                   lay-verify="range">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">开始时间</label>
+                        <div class="layui-input-inline">
+                            <input type="datetime" name="periodOpenStr" id="febs-form-group-date-periodOpenStr"
+                                   lay-verify="date" placeholder="开始时间" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    <!-- 结束时间 -->
+                    <div class="layui-inline">
+                        <label class="layui-form-label">结束时间</label>
+                        <div class="layui-input-inline">
+                            <input type="datetime" name="periodEndStr" id="febs-form-group-date-periodEndStr"
+                                   lay-verify="date" placeholder="结束时间" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item febs-hide">
+                        <button class="layui-btn" lay-submit="" lay-filter="period-add-form-submit"
+                                id="submit"></button>
+                        <button type="reset" class="layui-btn" id="reset"></button>
+                    </div>
+                    <table lay-filter="periodTableS" lay-data="{id: 'periodTableS'}"></table>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="period-option">
+    <span shiro:lacksPermission="matter:view">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <a lay-event="edit"><i class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
+    <a lay-event="del"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['febs', 'form', 'formSelects', 'validate', 'treeSelect', 'eleTree', 'laydate', 'table'], function () {
+        var $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            formSelects = layui.formSelects,
+            treeSelect = layui.treeSelect,
+            form = layui.form,
+            table = layui.table,
+            eleTree = layui.eleTree,
+            $view = $('#cycle-update'),
+            $searchForm = $view.find('form'),
+            $query = $view.find('#query'),
+            $reset = $view.find('#reset'),
+            $submit = $view.find('#submit'),
+            laydate = layui.laydate,
+            validate = layui.validate,
+            sortObject = {field: 'createTime', type: null},
+            tableIns, createTimeFrom,
+            layEvent,
+            periodId,
+            createTimeTo;
+
+        initTables();
+        form.render();
+
+        laydate.render({
+            elem: '#febs-form-group-date-periodOpenStr',
+            format: "yyyy-MM-dd",
+            value: new Date(),
+        });
+        laydate.render({
+            elem: '#febs-form-group-date-periodEndStr',
+            format: "yyyy-MM-dd",
+        });
+
+        function initTables() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'periodTableS',
+                url: ctx + 'period/listLittle',
+                cols: [[
+                    //{type: 'checkbox'},
+                    {field: 'periodName', title: '名称', width: 160},
+                    {field: 'periodOpen', title: '开始时间', width: 160},
+                    {field: 'periodEnd', title: '结束时间', width: 160},
+                    {field: 'remind', title: '提醒时间', mixWidth: 100},
+                    {title: '操作', toolbar: '#period-option', width: 100}
+                ]]
+            });
+        }
+
+        table.on('tool(periodTableS)', function (obj) {
+            elem: $view.find('.action-more'),
+                layEvent = obj.event;
+            var data = obj.data;
+            if (layEvent === 'edit') {
+                periodId = data.periodId;
+                febs.modal.open('提示时间设置', 'system/cycle/remind/' + periodId, {
+                    area: $(window).width() <= 750 ? '90%' : '50%',
+                    //btn: ['提交', '取消'],
+                    yes: function (index, layero) {
+                        //$('#matter-remind').find('#submit').trigger('click');
+
+                    },
+                    btn2: function () {
+                        layer.closeAll();
+                    },
+                    end: function () {
+                        form.val("febs-form-group-cycle", {
+                            "periodName": null,
+                        });
+                        var params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+                        tableIns.reload({where: params, page: {curr: 1}});
+                    }
+                });
+            }
+            if (layEvent === 'del') {
+                febs.modal.confirm('删除周期', '确定删除该条？', function () {
+                    deletePeriod(data.periodId);
+                });
+            }
+        });
+
+        function deletePeriod(periodId) {
+            febs.get(ctx + 'cycle/period/delete/' + periodId, null, function () {
+                //layer.closeAll();
+                $query.trigger('click');
+                //$searchForm[0].reset();
+                form.val("febs-form-group-cycle", {
+                    "periodName": null,
+                });
+                var params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+                tableIns.reload({where: params, page: {curr: 1}});
+                febs.alert.success('删除成功');
+            })
+        }
+
+        form.on('submit(period-add-form-submit)', function (data) {
+            addPeriod(data.field);
+            return false;
+        });
+
+        var addPeriod = function (data) {
+            febs.get(ctx + 'cycle/period/add', data, function () {
+                //layer.closeAll();
+                console.log(data);
+                febs.alert.success('新增成功');
+                //$searchForm[0].reset();
+                form.val("febs-form-group-cycle", {
+                    "periodName": null,
+                });
+                var params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+                tableIns.reload({where: params, page: {curr: 1}});
+                $query.trigger('click');
+            });
+            /*   }*/
+        }
+
+        function getQueryParams() {
+            var params = $searchForm.serializeJson();
+            var createTime = params.time;
+            if (createTime) {
+                createTimeFrom = createTime.split(' - ')[0];
+                createTimeTo = createTime.split(' - ')[1];
+            }
+            params.invalidate_ie_cache = new Date();
+            params.createTimeFrom = createTimeFrom;
+            params.createTimeTo = createTimeTo;
+            console.log(params);
+            return params;
+        }
+
+    });
+</script>

@@ -1,0 +1,283 @@
+<div class="layui-fluid layui-anim febs-anim" lay-title="新增事务"
+     id="matter-remind">
+    <div class="layui-row febs-container">
+        <div class="layui-card">
+            <div class="layui-card-body" style="padding: 15px;">
+                <form class="layui-form" action="" lay-filter="febs-matter-remind-one">
+                    <!-- 工作事项 -->
+                    <!--<div>
+                        <input style="display: none" name="deptId">
+                    </div>-->
+                    <div>
+                        <input style="display: none" name="matterId">
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">工作事项:</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="matterName" lay-verify="title"
+                                   autocomplete="off" placeholder="请输入工作事项"
+                                   class="layui-input" readonly>
+                        </div>
+                    </div>
+                    <!-- 责任人 -->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label ">默认时间:</label>
+                        <div class="layui-input-block">
+                            <select name="remindId"
+                                    lay-verify="required"
+                                    xm-select-direction="down"
+                                    xm-select="matter-update-remind"
+                                    xm-select-skin="default">
+                            </select>
+                        </div>
+                    </div>
+                    <!--添加-->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">新增提醒:</label>
+                        <div class="layui-input-inline">
+                            <input type="datetime" name="" id="febs-form-group-date-1"
+                                   lay-verify="date" placeholder="开始时间" autocomplete="off"
+                                   class="layui-input" pattern="yyyy-MM-dd">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label ">个人设置:</label>
+                        <!--<div class="layui-input-block">
+                            <select name="remindId"
+                                    lay-verify="required"
+                                    xm-select-direction="down"
+                                    xm-select="matter-update-remind-one"
+                                    xm-select-skin="default">
+                            </select>
+                        </div>-->
+                        <table lay-filter="remindTable" lay-data="{id: 'remindTable'}"></table>
+                    </div>
+                    <div class="layui-form-item febs-hide">
+                        <button class="layui-btn" lay-submit="" lay-filter="matter-remind-update-submit"
+                                id="submit"></button>
+                        <button type="reset" class="layui-btn" id="reset"></button>
+                    </div>
+                </form>
+                <div class="layui-input-block" style="display: none">
+                    <button class="layui-btn" lay-submit="" id="deleteRemind"
+                            lay-filter="febs-matter-remind-submit">日程初始化
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="remind-option">
+    <span shiro:lacksPermission="matter:view">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <!--<a lay-event="edit"><i class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>-->
+    <a lay-event="del"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+</script>
+<script data-th-inline="javascript" type="text/javascript">
+    layui.use(['febs', 'form', 'laydate', 'formSelects', 'jquery'], function () {
+        var $ = layui.jquery,
+            febs = layui.febs,
+            element = layui.element,
+            formSelects = layui.formSelects,
+            $view = $('#matter-remind'),
+            layer = layui.layer,
+            table = layui.table,
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            laydate = layui.laydate,
+            matter = [[${matter}]],
+            reminds = [[${reminds}]],
+            layEvent,
+            tableIns,
+            createTimeFrom,
+            createTimeTo,
+            form = layui.form;
+
+        initMatterValue();
+        agaFormSelect();
+        initTables();
+
+        function initTables() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'remindTable',
+                url: ctx + 'matter/reminds?matterId=' + matter.matterId + '&userId=' + currentUser.userId,
+                cols: [[
+                    //{type: 'checkbox'},
+                    {field: 'remindTime', title: '提醒时间', width: 120},
+                    {title: '操作', toolbar: '#remind-option', width: 100}
+                ]]
+            });
+        }
+
+        table.on('tool(remindTable)', function (obj) {
+            elem: $view.find('.action-more'),
+                layEvent = obj.event;
+            var data = obj.data;
+            if (layEvent === 'del') {
+                febs.modal.confirm('删除提醒时间', '确定删除该条？', function () {
+                    deleteRemind(data.remindId)
+                });
+            }
+        });
+
+
+        //formSelects.render();
+
+        function initMatterValue() {
+            form.val("febs-matter-remind-one", {
+                //"deptId": currentUser.deptId,
+                "matterId": matter.matterId,
+                "matterName": matter.matterName,
+            });
+        }
+
+        layui.formSelects.disabled("matter-update-remind");
+
+        //console.log(matter.matterId);
+        function agaFormSelect() {
+            formSelects.config('matter-update-remind', {
+                searchUrl: ctx + 'matter/reminds/' + matter.matterId,
+                response: {
+                    statusCode: 200
+                },
+                beforeSuccess: function (id, url, searchVal, result) {
+                    var data = result.data;
+                    //console.log("data:" + data);
+                    var tranData = [];
+                    for (var i = 0; i < data.length; i++) {
+                        //console.log("data[i].remindTime:" + data[i].remindTime);
+                        tranData.push({
+                            name: data[i].remindTime,
+                            value: data[i].remindId,
+                        })
+                    }
+                    result.data = tranData;
+                    return result;
+                },
+                error: function (id, url, searchVal, err) {
+                    console.error(err);
+                    febs.alert.error('获取用户列表失败');
+                },
+                success: function () {
+                    if (matter.remindId != null) {
+                        formSelects.value('matter-update-remind', matter.remindId.split(','));
+                    }
+                    //console.log(matter.userId);
+                },
+            });
+        }
+
+        /*remindForMe();
+
+        function remindForMe() {
+            formSelects.config('matter-update-remind-one', {
+                searchUrl: ctx + 'matter/reminds?matterId=' + matter.matterId + '&userId=' + currentUser.userId,
+                response: {
+                    statusCode: 200
+                },
+                beforeSuccess: function (id, url, searchVal, result) {
+                    var data = result.data;
+                    //console.log("data:" + data);
+                    var tranData = [];
+                    for (var i = 0; i < data.length; i++) {
+                        //console.log("data[i].remindTime:" + data[i].remindTime);
+                        tranData.push({
+                            name: data[i].remindTime,
+                            value: data[i].remindId,
+                        })
+                    }
+                    result.data = tranData;
+                    return result;
+                },
+                error: function (id, url, searchVal, err) {
+                    console.error(err);
+                    febs.alert.error('获取用户列表失败');
+                },
+                success: function () {
+                    if (matter.remindId != null) {
+                        formSelects.value('matter-update-remind-one', matter.remindId.split(','));
+                    }
+                    //console.log(matter.userId);
+                },
+            });
+        }*/
+
+
+        /**
+         * 新增
+         */
+        laydate.render({
+            elem: '#febs-form-group-date-1',
+            format: 'yyyy-MM-dd',
+            value: new Date(),
+            type: 'date',
+            done: function (value, date) {
+                test(value, date);
+            }
+        });
+
+
+        function test(value, date) {
+            value = value + "," + matter.matterId;
+            console.log(value);
+            console.log(date);
+            febs.get(ctx + 'matter/remindAdd/' + value, null, function () {
+                form.val("febs-matter-remind-one", {
+                    "remindId": null,
+                    "matterId": matter.matterId,
+                    "userId": currentUser.userId,
+                });
+                var params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+                tableIns.reload({where: params, page: {curr: 1}});
+                febs.alert.success('新增成功');
+            });
+        }
+
+        function getQueryParams() {
+            var params = $searchForm.serializeJson();
+            var createTime = params.time;
+            if (createTime) {
+                createTimeFrom = createTime.split(' - ')[0];
+                createTimeTo = createTime.split(' - ')[1];
+            }
+            params.invalidate_ie_cache = new Date();
+            params.createTimeFrom = createTimeFrom;
+            params.createTimeTo = createTimeTo;
+            console.log(params);
+            return params;
+        }
+
+        /**
+         * 初始化
+         */
+
+        form.on('submit(febs-matter-remind-submit)', function (date) {
+            deleteReminds(date);
+        })
+
+        function deleteReminds(date) {
+            febs.get(ctx + 'matter/remindDelete/' + matter.matterId, null, function () {
+                layer.closeAll();
+                febs.alert.success('重置成功');
+            })
+        }
+
+
+        function deleteRemind(date) {
+            febs.get(ctx + 'remind/delete?remindId=' + date, null, function () {
+                form.val("febs-matter-remind-one", {
+                    "remindId": null,
+                    "matterId": matter.matterId,
+                    "userId": currentUser.userId,
+                });
+                var params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+                tableIns.reload({where: params, page: {curr: 1}});
+                febs.alert.success('重置成功');
+            })
+        }
+
+    });
+</script>

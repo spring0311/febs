@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.system.mapper.DeptMapper">
+
+    <select id="findDeptByDept" resultType="cc.mrbird.febs.system.entity.Dept">
+        SELECT
+        DEPT_ID deptId,
+        PARENT_ID parentId,
+        DEPT_NAME deptName,
+        ORDER_NUM orderNum,
+        CREATE_TIME createTime,
+        MODIFY_TIME modifyTime
+        FROM
+        T_DEPT d
+        WHERE 1=1
+        <if test="dept.deptId != null and dept.deptId != ''">
+            AND d.DEPT_ID = #{dept.deptId}
+        </if>
+        <if test="dept.parentId != null and dept.parentId != ''">
+            AND d.PARENT_ID = #{dept.parentId}
+        </if>
+        <if test="dept.deptName != null and dept.deptName != ''">
+            AND d.DEPT_NAME Like CONCAT(CONCAT('%',#{dept.deptName}),'%')
+        </if>
+        <if test="dept.orderNum != null and dept.orderNum != ''">
+            AND d.ORDER_NUM = #{dept.orderNum}
+        </if>
+        <if test="dept.createTime != null and dept.createTime != ''">
+            AND d.CREATE_TIME = #{dept.createTime}
+        </if>
+        <if test="dept.modifyTime != null and dept.modifyTime != ''">
+            AND d.MODIFY_TIME = #{dept.modifyTime}
+        </if>
+        GROUP BY
+        DEPT_ID ,
+        PARENT_ID ,
+        DEPT_NAME ,
+        ORDER_NUM ,
+        CREATE_TIME ,
+        MODIFY_TIME 
+    </select>
+</mapper>

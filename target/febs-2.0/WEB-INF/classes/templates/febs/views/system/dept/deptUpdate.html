@@ -1,0 +1,79 @@
+<div class="layui-col-md12 layui-col-sm0 layui-col-xs12" id="dept-update">
+  <div class="layui-card">
+    <div class="layui-card-header" id="form-header">修改部门</div>
+    <div class="layui-card-body febs-table-full">
+      <form class="layui-form layui-table-form" action=""
+        lay-filter="dept-form">
+        <!--<div class="layui-form-item febs-hide">
+          <label class="layui-form-label febs-form-item-require">ID：</label>
+          <div class="layui-input-block">
+            <input type="text" name="deptId" class="layui-input">
+          </div>
+        </div>-->
+        <div class="layui-form-item">
+          <label class="layui-form-label">部门ID：</label>
+          <div class="layui-input-block">
+            <input type="text" value="" name="deptId" readonly
+                   autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">上级ID：</label>
+          <div class="layui-input-block">
+            <input type="text" value="" name="parentId" readonly
+              autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label febs-form-item-require">部门名称：</label>
+          <div class="layui-input-block">
+            <input type="text" name="deptName" autocomplete="off"
+              class="layui-input" minlength="2" maxlength="10"
+              lay-verify="range">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">部门排序：</label>
+          <div class="layui-input-block">
+            <input type="text" name="orderNum" autocomplete="off"
+              class="layui-input" lay-verify="number">
+          </div>
+        </div>
+        <button type="reset" class="layui-btn febs-hide" id="reset-form"></button>
+        <button class="layui-btn febs-hide" lay-submit=""
+          lay-filter="dept-form-submit" id="submit-form"></button>
+      </form>
+    </div>
+  </div>
+</div>
+<script data-th-inline="javascript">
+
+layui.use(['febs', 'form', 'formSelects', 'validate', 'treeSelect', 'eleTree'], function () {
+    var $ = layui.$,
+        febs = layui.febs,
+        layer = layui.layer,
+        formSelects = layui.formSelects,
+        treeSelect = layui.treeSelect,
+        form = layui.form,
+        eleTree = layui.eleTree,
+        $view = $('#dept-update'),
+        $query = $view.find('#query'),
+        $reset = $view.find('#reset'),
+        $submit = $view.find('#submit'),
+        dept =  [[${dept}]],
+        validate = layui.validate;
+    
+    initRoleValue();
+    
+    function initRoleValue() {
+        form.val("dept-form", {
+            "deptId": dept.deptId,
+            "parentId": dept.parentId,
+            "deptName": dept.deptName,
+            "orderNum": dept.orderNum,
+        });
+    }
+    
+  
+});  
+</script>

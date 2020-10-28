@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.system.mapper.MenuMapper">
+    <resultMap id="menu" type="cc.mrbird.febs.system.entity.Menu">
+        <id column="MENU_ID" jdbcType="DECIMAL" property="menuId"/>
+        <result column="PARENT_ID" jdbcType="DECIMAL" property="parentId"/>
+        <result column="MENU_NAME" jdbcType="VARCHAR" property="menuName"/>
+        <result column="URL" jdbcType="VARCHAR" property="url"/>
+        <result column="PERMS" jdbcType="VARCHAR" property="perms"/>
+        <result column="ICON" jdbcType="VARCHAR" property="icon"/>
+        <result column="TYPE" jdbcType="CHAR" property="type"/>
+        <result column="ORDER_NUM" jdbcType="DECIMAL" property="orderNum"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="MODIFY_TIME" jdbcType="TIMESTAMP" property="modifyTime"/>
+    </resultMap>
+
+    <select id="findUserPermissions" resultMap="menu" databaseId="oracle">
+        SELECT
+            m.PERMS
+        FROM
+            T_ROLE r
+        LEFT JOIN T_USER_ROLE ur ON (r.ROLE_ID = ur.ROLE_ID)
+        LEFT JOIN T_USER u ON (u.USER_ID = ur.USER_ID)
+        LEFT JOIN T_ROLE_MENU rm ON (rm.ROLE_ID = r.ROLE_ID)
+        LEFT JOIN T_MENU m ON (m.MENU_ID = rm.MENU_ID)
+        WHERE
+            u.USERNAME = #{username}
+        AND m.PERMS is not null
+    </select>
+    <!--AND m.PERMS != ''-->
+
+    <select id="findUserMenus" resultMap="menu" databaseId="oracle">
+        SELECT
+            m.*
+        FROM
+            T_MENU m
+        WHERE
+            M.TYPE &lt;&gt; 1
+        AND m.MENU_ID IN (
+            SELECT DISTINCT
+                rm.MENU_ID
+            FROM
+                T_ROLE_MENU rm
+            LEFT JOIN T_ROLE r ON (rm.ROLE_ID = r.ROLE_ID)
+            LEFT JOIN T_USER_ROLE ur ON (ur.ROLE_ID = r.ROLE_ID)
+            LEFT JOIN T_USER u ON (u.USER_ID = ur.USER_ID)
+            WHERE
+                u.USERNAME = #{username}
+        )
+        ORDER BY
+          m.ORDER_NUM
+    </select>
+</mapper>

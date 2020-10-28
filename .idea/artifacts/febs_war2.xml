@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="febs:war2">
+    <output-path>$PROJECT_DIR$/out/artifacts/febs_war2</output-path>
+    <root id="archive" name="febs_war.war">
+      <element id="artifact" artifact-name="febs:war exploded" />
+    </root>
+  </artifact>
+</component>

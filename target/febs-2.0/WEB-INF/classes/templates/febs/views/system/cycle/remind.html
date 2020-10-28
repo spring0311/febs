@@ -1,0 +1,141 @@
+<div class="layui-fluid layui-anim febs-anim" lay-title="新增事务"
+     id="matter-remind">
+    <div class="layui-row febs-container">
+        <div class="layui-card">
+            <div class="layui-card-body" style="padding: 15px;">
+                <form class="layui-form" action="" lay-filter="febs-form-group-cycle-remind">
+                    <!-- 工作事项 -->
+                    <!--<div>
+                        <input style="display: none" name="deptId">
+                    </div>-->
+                    <div>
+                        <input style="display: none" name="periodId">
+                    </div>
+                    <!--添加-->
+                    <div class="layui-inline">
+                        <label class="layui-form-label">新增提醒</label>
+                        <div class="layui-input-inline">
+                            <input type="datetime" name="" id="febs-form-group-date-remind"
+                                   lay-verify="date" placeholder="开始时间" autocomplete="off"
+                                   class="layui-input" pattern="MM-dd">
+                        </div>
+                    </div>
+                </form>
+                <table lay-filter="periodRemind" lay-data="{id: 'periodRemind'}"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="remind-option">
+    <span shiro:lacksPermission="matter:view">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <!-- <a lay-event="edit"><i class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>-->
+    <a lay-event="del"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+</script>
+<script data-th-inline="javascript" type="text/javascript">
+    layui.use(['febs', 'form', 'laydate', 'formSelects', 'jquery', 'table'], function () {
+        var $ = layui.jquery,
+            febs = layui.febs,
+            element = layui.element,
+            formSelects = layui.formSelects,
+            $view = $('#matter-remind'),
+            layer = layui.layer,
+            $searchForm = $view.find('form'),
+            table = layui.table,
+            laydate = layui.laydate,
+            period = [[${period}]],
+            createTimeFrom,
+            createTimeTo,
+            sortObject = {field: 'createTime', type: null},
+            reminds = [[${reminds}]],
+            tableIns,
+            form = layui.form;
+
+        form.render();
+        initMatterValue();
+        initTables();
+
+        function initMatterValue() {
+            form.val("febs-form-group", {
+                "periodId": period.periodId,
+            });
+        }
+
+        laydate.render({
+            elem: '#febs-form-group-date-remind',
+            format: 'MM-dd',
+            value: new Date(),
+            type: 'date',
+            done: function (value, date) {
+                test(value, date);
+            }
+        });
+
+        function test(value, date) {
+            value = value + "," + period.periodId;
+            console.log(value);
+            console.log(date);
+            febs.get(ctx + 'period/remindAdd/' + value, null, function () {
+                form.val("febs-form-group-cycle-remind", {
+                    "periodName": null,
+                });
+                var params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+                tableIns.reload({where: params, page: {curr: 1}});
+                //layer.closeAll();
+                febs.alert.success('新增成功');
+            });
+        }
+
+        table.on('tool(periodRemind)', function (obj) {
+            elem: $view.find('.action-more'),
+                layEvent = obj.event;
+            var data = obj.data;
+            if (layEvent === 'del') {
+                febs.modal.confirm('删除提醒时间', '确定删除该条？', function () {
+                    deletePeriod(data.remindId);
+                });
+            }
+        });
+
+        function deletePeriod(remindId) {
+            febs.get(ctx + 'remind/delete/' + remindId, null, function () {
+                form.val("febs-form-group-cycle-remind", {
+                    "periodName": null,
+                });
+                var params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+                tableIns.reload({where: params, page: {curr: 1}});
+                febs.alert.success('删除成功');
+            })
+        }
+
+
+        function initTables() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'periodRemind',
+                url: ctx + 'period/reminds/' + period.periodId,
+                cols: [[
+                    //{type: 'checkbox'},
+                    {field: 'remindTime', title: '提醒时间', mixWidth: 120},
+                    {title: '操作', toolbar: '#remind-option', width: 100}
+                ]]
+            });
+        }
+
+        function getQueryParams() {
+            var params = $searchForm.serializeJson();
+            var createTime = params.time;
+            if (createTime) {
+                createTimeFrom = createTime.split(' - ')[0];
+                createTimeTo = createTime.split(' - ')[1];
+            }
+            params.invalidate_ie_cache = new Date();
+            params.createTimeFrom = createTimeFrom;
+            params.createTimeTo = createTimeTo;
+            console.log(params);
+            return params;
+        }
+
+    });
+</script>

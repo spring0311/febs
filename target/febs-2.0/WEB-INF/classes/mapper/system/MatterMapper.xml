@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.system.mapper.MatterMapper">
+
+    <sql id="countMatterDetailSql" databaseId="oracle">
+        SELECT
+        COUNT(distinct m.MATTER_ID)
+        FROM
+        T_MATTER m
+        LEFT JOIN t_DEPT d ON (m.DEPT_ID = d.DEPT_ID)
+        LEFT JOIN t_REMIND r ON (r.MATTER_ID = m.MATTER_ID)
+        LEFT JOIN t_USER_MATTER um ON (um.MATTER_ID = m.MATTER_ID)
+        LEFT JOIN t_USER u ON (u.USER_ID = um.USER_ID)
+        WHERE 1 = 1
+        <if test="matter.matterName != null and matter.matterName != ''">
+            AND m.MATTER_NAME like CONCAT(CONCAT('%',#{matter.matterName}),'%')
+        </if>
+        <if test="matter.deptId != null and matter.deptId != ''">
+            AND m.DEPT_ID = #{matter.deptId}
+        </if>
+        <if test="matter.isOpen != null ">
+            AND m.IS_OPEN = #{matter.isOpen}
+        </if>
+        <if test="matter.important != null ">
+            AND m.IMPORTANT = #{matter.important}
+        </if>
+        <if test="matter.urgent != null ">
+            AND m.URGENT = #{matter.urgent}
+        </if>
+        <if test="matter.patriarchId != null ">
+            AND m.PATRIARCH_ID = #{matter.patriarchId}
+        </if>
+        <if test="matter.isPatriarch != null ">
+            AND m.IS_PATRIARCH = #{matter.isPatriarch}
+        </if>
+        <if test="matter.matterId != null and matter.matterId != ''">
+            AND m.MATTER_ID = #{matter.matterId}
+        </if>
+        <if test="matter.createTimeFrom != null and matter.createTimeFrom !=''">
+            And m.CREATE_TIME &gt; #{matter.createTimeFrom}
+        </if>
+        <if test="matter.createTime != null and matter.createTime !=''">
+            And m.CREATE_TIME &gt; #{matter.createTime}
+        </if>
+        <if test="matter.createTimeTo != null and matter.createTimeTo !=''">
+            And m.CREATE_TIME &lt; #{matter.createTimeTo}
+        </if>
+        <if test="matter.forEach != null and matter.forEach !=''">
+            And m.FOR_EACH = #{matter.forEach}
+        </if>
+        <if test="matter.longUserId != null and matter.longUserId !=''">
+            And um.USER_ID = #{matter.longUserId}
+        </if>
+        <if test="matter.finish != null">
+            And um.FINISH = #{matter.finish}
+        </if>
+        <if test="matter.importantOne != null">
+            And um.IMPORTANT_ONE = #{matter.importantOne}
+        </if>
+        <if test="matter.urgentOne != null">
+            And um.URGENT_ONE = #{matter.urgentOne}
+        </if>
+    </sql>
+
+    <sql id="findMatterDetailSql" databaseId="oracle">
+        SELECT
+        m.MATTER_ID matterId,
+        m.MATTER_NAME matterName,
+        m.MATTER_TEXT matterText,
+        m.MATTER_OPEN matterOpen,
+        TO_CHAR(m.MATTER_OPEN,'yyyy-MM-dd') matterOpenStr,
+        m.END,
+        TO_CHAR(m.END,'yyyy-MM-dd') endStr,
+        m.IS_OPEN isOpen,
+        m.IMPORTANT,
+        m.URGENT,
+        m.PERIOD,
+        m.DEPT_ID deptId,
+        m.CREATE_TIME createTime,
+        m.FOR_EACH forEach,
+        m.CYCLE_ID cycleId,
+        m.TEAM_ID teamId,
+        m.PATRIARCH_ID patriarchId,
+        m.IS_PATRIARCH isPatriarch,
+        cy.CYCLE_NAME cycleName,
+        um.IMPORTANT_ONE importantOne,
+        um.URGENT_ONE urgentOne,
+        TO_CHAR(m.CREATE_TIME,'yyyy-MM-dd') createTimeStr,
+        d.DEPT_NAME deptName,
+        um.FINISH finish,
+        um.ACTUALLY_TIME actuallyTime,
+        LISTAGG(u.USER_ID,',') WITHIN GROUP (ORDER BY u.USER_ID) userId,
+        LISTAGG(TO_CHAR(u.NAME),',') WITHIN GROUP (ORDER BY TO_CHAR(u.NAME)) AS name,
+        LISTAGG(r.REMIND_ID,',') WITHIN GROUP (ORDER BY r.REMIND_ID) remindId,
+        LISTAGG(udp.PERIOD_ID,',') WITHIN GROUP (ORDER BY udp.PERIOD_ID) cycleIdStr
+        FROM
+        t_MATTER M
+        LEFT JOIN t_DEPT d ON (m.DEPT_ID = d.DEPT_ID)
+        LEFT JOIN T_CYCLE cy ON (m.CYCLE_ID = cy.CYCLE_ID)
+        LEFT JOIN t_REMIND r ON (r.MATTER_ID = m.MATTER_ID)
+        LEFT JOIN t_USER_MATTER um ON (um.MATTER_ID = m.MATTER_ID)
+        LEFT JOIN t_USER u ON (u.USER_ID = um.USER_ID)
+        LEFT JOIN T_USER_DATA_PERMISSION udp ON (m.MATTER_ID = udp.MATTER_ID)
+        WHERE 1 = 1
+        <if test="matter.matterName != null and matter.matterName != ''">
+            AND m.MATTER_NAME like CONCAT(CONCAT('%',#{matter.matterName}),'%')
+        </if>
+        <if test="matter.deptId != null and matter.deptId != ''">
+            AND m.DEPT_ID = #{matter.deptId}
+        </if>
+        <if test="matter.isOpen != null ">
+            AND m.IS_OPEN = #{matter.isOpen}
+        </if>
+        <if test="matter.important != null ">
+            AND m.IMPORTANT = #{matter.important}
+        </if>
+        <if test="matter.urgent != null ">
+            AND m.URGENT = #{matter.urgent}
+        </if>
+        <if test="matter.matterId != null and matter.matterId != ''">
+            AND m.MATTER_ID = #{matter.matterId}
+        </if>
+        <if test="matter.createTimeFrom != null and matter.createTimeFrom !=''">
+            And m.CREATE_TIME &gt; #{matter.createTimeFrom}
+        </if>
+        <if test="matter.createTime != null and matter.createTime !=''">
+            And m.CREATE_TIME &gt; #{matter.createTime}
+        </if>
+        <if test="matter.createTimeTo != null and matter.createTimeTo !=''">
+            And m.CREATE_TIME &lt; #{matter.createTimeTo}
+        </if>
+        <if test="matter.forEach != null and matter.forEach !=''">
+            And m.FOR_EACH = #{matter.forEach}
+        </if>
+        <if test="matter.longUserId != null and matter.longUserId !=''">
+            And um.USER_ID = #{matter.longUserId}
+        </if>
+        <if test="matter.finish != null">
+            And um.FINISH = #{matter.finish}
+        </if>
+        <if test="matter.importantOne != null">
+            And um.IMPORTANT_ONE = #{matter.importantOne}
+        </if>
+        <if test="matter.urgentOne != null">
+            And um.URGENT_ONE = #{matter.urgentOne}
+        </if>
+        <if test="matter.date != null">
+            And TO_CHAR(m.MATTER_OPEN,'yyyy-MM-dd') = #{matter.date}
+        </if>
+        <if test="matter.period != null and matter.period !=''">
+            And m.PERIOD = #{matter.period}
+        </if>
+        <if test="matter.cycleId != null and matter.cycleId !=''">
+            And m.CYCLE_ID = #{matter.cycleId}
+        </if>
+        <if test="matter.matterOpenStr != null and matter.matterOpenStr !=''">
+            AND TO_CHAR(m.MATTER_OPEN , 'yyyy-MM-dd') = #{matter.matterOpenStr}
+        </if>
+        <if test="matter.endStr != null and matter.endStr !=''">
+            AND TO_CHAR(m.END , 'yyyy-MM-dd') = #{matter.endStr}
+        </if>
+        <if test="matter.patriarchId != null ">
+            AND m.PATRIARCH_ID = #{matter.patriarchId}
+        </if>
+        <if test="matter.isPatriarch != null ">
+            AND m.IS_PATRIARCH = #{matter.isPatriarch}
+        </if>
+        GROUP BY
+        m.MATTER_ID ,
+        m.MATTER_NAME ,
+        m.MATTER_TEXT ,
+        m.MATTER_OPEN ,
+        m.END,
+        m.IS_OPEN ,
+        m.IMPORTANT,
+        m.URGENT,
+        m.PERIOD,
+        m.DEPT_ID ,
+        m.CREATE_TIME ,
+        m.FOR_EACH ,
+        m.CYCLE_ID ,
+        m.TEAM_ID,
+        m.PATRIARCH_ID ,
+        m.IS_PATRIARCH ,
+        cy.CYCLE_NAME ,
+        um.IMPORTANT_ONE ,
+        um.URGENT_ONE ,
+        d.DEPT_NAME,
+        um.FINISH,
+        um.ACTUALLY_TIME
+        <if test='matter.order == null and matter.status==null '>
+            order by m.END DESC
+        </if>
+        <if test='matter.order == "1" and matter.status=="1" '>
+            order by m.CREATE_TIME DESC
+        </if>
+        <if test='matter.order == "0" and matter.status=="1" '>
+            order by m.CREATE_TIME
+        </if>
+        <if test='matter.order == "1" and matter.status=="2" '>
+            order by m.END DESC
+        </if>
+        <if test='matter.order =="0" and matter.status=="2" '>
+            order by m.END
+        </if>
+        <if test='matter.order == "1" and matter.status=="3" '>
+            order by um.ACTUALLY_TIME DESC
+        </if>
+        <if test='matter.order =="0" and matter.status=="3" '>
+            order by um.ACTUALLY_TIME
+        </if>
+    </sql>
+
+
+    <select id="countMatterDetail" parameterType="cc.mrbird.febs.system.entity.Matter" resultType="long"
+            databaseId="oracle">
+        <include refid="countMatterDetailSql"/>
+    </select>
+
+    <select id="findMatterDetailPage" parameterType="cc.mrbird.febs.system.entity.Matter"
+            resultType="cc.mrbird.febs.system.entity.Matter" databaseId="oracle">
+        <include refid="findMatterDetailSql"/>
+    </select>
+
+    <select id="findMatterDetail" parameterType="cc.mrbird.febs.system.entity.Matter"
+            resultType="cc.mrbird.febs.system.entity.Matter" databaseId="oracle">
+        <include refid="findMatterDetailSql"/>
+    </select>
+
+    <!--void updateMatterUrgent(Long matterId);-->
+    <update id="updateMatterUrgent" databaseId="oracle">
+        UPDATE
+        T_MATTER m
+        SET
+        m.URGENT=1
+        WHERE
+        m.MATTER_ID=#{matterId}
+    </update>
+
+    <update id="updateIsOpen">
+        UPDATE
+        T_MATTER m
+        SET
+        m.IS_OPEN = 1
+        WHERE
+        TO_CHAR(m.END , 'MM-dd') = #{date}
+        AND
+        m.DEPT_ID is not null
+    </update>
+
+    <update id="updateIsOpenByEach">
+        UPDATE
+        T_MATTER m
+        SET
+        m.IS_OPEN = 0
+        WHERE
+        TO_CHAR(m.MATTER_OPEN,'MM-dd') = #{date}
+        AND
+        m.FOR_EACH = #{forEach}
+    </update>
+
+    <!--List<Long> findIdsByEndTime(Date date);-->
+    <select id="findIdsByEndTime" resultType="long">
+    SELECT
+    m.MATTER_ID
+    FROM
+    T_MATTER m
+    WHERE
+    TO_CHAR(m.END,'MM-dd') = #{date}
+    </select>
+
+    <select id="countMatterDetailForOne" resultType="java.lang.Long">
+        SELECT
+        COUNT(DISTINCT m.MATTER_ID)
+        FROM T_USER_MATTER um
+        LEFT JOIN T_MATTER m
+        ON um.matter_id=m.matter_id
+        WHERE um.user_id=#{matter.longUserId}
+        AND m.IS_OPEN = 0
+        <if test="matter.matterName != null and matter.matterName !=''">
+            And m.MATTER_NAME = #{matter.matterName}
+        </if>
+        <if test="matter.finish != null">
+            And um.FINISH = #{matter.finish}
+        </if>
+    </select>
+    <select id="findMaxId" resultType="java.lang.Long">
+        select max(to_number(MATTER_ID))
+        from T_MATTER
+    </select>
+
+    <select id="selectName" resultType="java.lang.String">
+        SELECT
+        LISTAGG(TO_CHAR(u.NAME),',') WITHIN GROUP (ORDER BY TO_CHAR(u.NAME)) AS name
+        FROM
+        t_MATTER M
+        LEFT JOIN t_USER_MATTER um ON (um.MATTER_ID = m.MATTER_ID)
+        LEFT JOIN t_USER u ON (u.USER_ID = um.USER_ID)
+        WHERE 1=1
+        AND m.MATTER_ID = #{matter.matterId}
+    </select>
+    <!--<select id="findIdByEach" resultType="java.lang.Long">
+        SELECT
+        m.MATTER_ID
+        FROM
+        T_MATTER m
+        WHERE
+        TO_CHAR(m.MATTER_OPEN,'MM-dd') = #{date}
+        AND
+        m.FOR_EACH = #{forEach}
+    </select>-->
+
+
+</mapper>
