@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Created-By: IntelliJ IDEA
-Built-By: 姑娘脸红晕如潮
-Build-Jdk: 1.8.0_251
-Implementation-Title: febs
-Implementation-Version: 2.0
-Implementation-Vendor-Id: cc.mrbird
-Main-Class: ${start-class}
-
