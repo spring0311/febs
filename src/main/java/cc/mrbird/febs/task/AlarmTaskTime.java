@@ -1,17 +1,14 @@
 package cc.mrbird.febs.task;
 
 import cc.mrbird.febs.system.entity.*;
-import cc.mrbird.febs.system.mapper.UserMatterMapper;
 import cc.mrbird.febs.system.service.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import org.apache.xerces.util.SynchronizedSymbolTable;
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import javax.validation.Valid;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -23,6 +20,7 @@ import java.util.*;
  * @create: 2020-07-30 10:33
  */
 @Component
+@ConfigurationProperties(prefix = "file")
 public class AlarmTaskTime implements InitializingBean {
 
     private final IRemindService iRemindService;
@@ -35,8 +33,9 @@ public class AlarmTaskTime implements InitializingBean {
 
     private final IUserDataPermissionService iUserDataPermissionService;
 
-    /*@Value("${day.value}")
-    private int addDay;*/
+    @Value("${day.value}")
+    private int addDay;
+
 
     public AlarmTaskTime(IRemindService iRemindService, IMatterService matterService, ICycleService iCycleService, IPeriodService iPeriodService, IUserDataPermissionService iUserDataPermissionService) {
         this.iRemindService = iRemindService;
@@ -57,7 +56,7 @@ public class AlarmTaskTime implements InitializingBean {
      *
      * @throws ParseException
      */
-    @Scheduled(cron = "0 00 09 * * ?")//触发时间 秒 分 时
+    @Scheduled(cron = "0 00 01 * * ?")//触发时间 秒 分 时
     public void selectMatterRemind() throws ParseException {
         //得到当前时间的yyyy-MM-dd
         Date date = new Date();
@@ -84,7 +83,7 @@ public class AlarmTaskTime implements InitializingBean {
     /**
      * @throws ParseException
      */
-    @Scheduled(cron = "0 00 09 * * ?")//触发时间 秒 分 时
+    @Scheduled(cron = "0 00 01 * * ?")//触发时间 秒 分 时
     public void selectMatterRemindByOne() throws ParseException {
         //得到当前时间的yyyy-MM-dd
         Date date = new Date();
@@ -114,7 +113,7 @@ public class AlarmTaskTime implements InitializingBean {
      *
      * @throws ParseException
      */
-    @Scheduled(cron = "0 00 09 * * ?")
+    @Scheduled(cron = "0 00 01 * * ?")
     public void endTimeRemind() throws ParseException {
         String date = getDate();
         List<Long> matterIds = matterService.selectMatterIdsByEndTime(date);
@@ -128,7 +127,7 @@ public class AlarmTaskTime implements InitializingBean {
     /**
      * 个人周期循环 月
      */
-    @Scheduled(cron = "0 00 09 * * ?")
+    @Scheduled(cron = "0 00 01 * * ?")
     public void forEachOne() throws ParseException {
         Date now = new Date();
         Calendar calendar = Calendar.getInstance();
@@ -169,7 +168,7 @@ public class AlarmTaskTime implements InitializingBean {
     /**
      * 周期定时
      */
-    @Scheduled(cron = "0 00 09 * * ?")
+    @Scheduled(cron = "0 00 01 * * ?")
     public void cycleMatter() {
         System.err.println("周期定时!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         Date now = new Date();
@@ -232,7 +231,8 @@ public class AlarmTaskTime implements InitializingBean {
         date = simpleDateFormat.parse(time);*/
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);
-        calendar.add(calendar.DATE, 15);
+        calendar.add(calendar.DATE, addDay);
+        System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!!::" + addDay);
         date = calendar.getTime();
         String end = simpleDateFormat.format(date);
         return end;

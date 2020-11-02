@@ -67,6 +67,9 @@ public class MatterController extends BaseController {
     @Autowired
     private final IUserDataPermissionService iUserDataPermissionService;
 
+    @Autowired
+    private AlarmTaskTime alarmTaskTime;
+
     @GetMapping(FebsConstant.VIEW_PREFIX + "matter")
     public String matterIndex() {
         //System.err.println("matterIndex");
@@ -77,7 +80,6 @@ public class MatterController extends BaseController {
     @ResponseBody
     @ControllerEndpoint(operation = "定时任务", exceptionMessage = "执行失败")
     public FebsResponse flushMatter() throws Exception {
-        AlarmTaskTime alarmTaskTime = new AlarmTaskTime(remindService, matterService, iCycleService, iPeriodService, iUserDataPermissionService);
         alarmTaskTime.afterPropertiesSet();
         return new FebsResponse().success();
     }
@@ -382,12 +384,20 @@ public class MatterController extends BaseController {
         iUserDataPermissionService.remove(queryWrapper);
         UserDataPermission userDataPermission = new UserDataPermission();
         userDataPermission.setMatterId(matter.getMatterId());
-        for (String periodId : periodIds) {
+        Long time = System.currentTimeMillis();
+        for (int i = 0; i < periodIds.length; i++) {
+            time += 1;
+            userDataPermission.setDeptId(time);
+            userDataPermission.setUserId(time);
+            userDataPermission.setPeriodId(Long.valueOf(periodIds[i]));
+            iUserDataPermissionService.saveOrUpdate(userDataPermission);
+        }
+        /*for (String periodId : periodIds) {
             userDataPermission.setUserId(System.currentTimeMillis());
             userDataPermission.setDeptId(System.currentTimeMillis());
             userDataPermission.setPeriodId(Long.valueOf(periodId));
             iUserDataPermissionService.saveOrUpdate(userDataPermission);
-        }
+        }*/
     }
 
     @ControllerEndpoint(operation = "修改提醒时间", exceptionMessage = "修改提醒时间失败")

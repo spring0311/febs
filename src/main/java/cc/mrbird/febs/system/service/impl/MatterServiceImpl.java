@@ -454,11 +454,19 @@ public class MatterServiceImpl extends ServiceImpl<MatterMapper, Matter> impleme
         String[] strings = ids.split(",");
         UserDataPermission userDataPermission = new UserDataPermission();
         userDataPermission.setMatterId(matterId);
-        for (String periodId : strings) {
+       /* for (String periodId : strings) {
             userDataPermission.setDeptId(System.currentTimeMillis());
             userDataPermission.setUserId(System.currentTimeMillis());
             userDataPermission.setPeriodId(Long.valueOf(periodId));
             System.err.println("insertInto:" + userDataPermission);
+            userDataPermissionMapper.insert(userDataPermission);
+        }*/
+        Long time = System.currentTimeMillis();
+        for (int i = 0; i < strings.length; i++) {
+            time += 1;
+            userDataPermission.setDeptId(time);
+            userDataPermission.setUserId(time);
+            userDataPermission.setPeriodId(Long.valueOf(strings[i]));
             userDataPermissionMapper.insert(userDataPermission);
         }
     }

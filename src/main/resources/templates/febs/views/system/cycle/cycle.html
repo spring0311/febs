@@ -147,7 +147,7 @@
                 var checkStatus = table.checkStatus('cycleTableS');
                 febs.modal.view('周期', 'system/cycle/update/' + data.periodId, {
                     btn: ['提交', '取消'],
-                    area: $(window).width() <= 750 ? '95%' : '1000px',
+                    area: [$(window).width() <= 750 ? '80%' : '60%', $(window).height() <= 1000 ? '80%' : '60%'],
                     offset: '150px',
                     yes: function (index, layero) {
                         $('#cycle-update').find('#submit').trigger('click');
