@@ -414,6 +414,7 @@ public class MatterServiceImpl extends ServiceImpl<MatterMapper, Matter> impleme
         Period dao = periodService.getById(period.getParentId());
         matter.setPeriod(dao.getPeriodName());
         matter.setCycleId(dao.getPeriodId());
+        System.err.println("插入的matter:" + matter);
         matterMapper.insert(matter);
         //查询到插入后的matterId
         Long matterId = matterMapper.findMaxId();
@@ -519,6 +520,9 @@ public class MatterServiceImpl extends ServiceImpl<MatterMapper, Matter> impleme
         } else {
             String userId = matter.getUserId();
             userIdss = userId.split(",");
+        }
+        if (matter.getIsPatriarch() == 0) {
+            userMatter.setIsRemind(1);
         }
         for (String userId : userIdss
         ) {

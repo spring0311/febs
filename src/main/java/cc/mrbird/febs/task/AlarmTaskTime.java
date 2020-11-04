@@ -56,7 +56,7 @@ public class AlarmTaskTime implements InitializingBean {
      *
      * @throws ParseException
      */
-    @Scheduled(cron = "0 00 01 * * ?")//触发时间 秒 分 时
+    @Scheduled(cron = "0 30 09 * * ?")//触发时间 秒 分 时
     public void selectMatterRemind() throws ParseException {
         //得到当前时间的yyyy-MM-dd
         Date date = new Date();
@@ -83,7 +83,7 @@ public class AlarmTaskTime implements InitializingBean {
     /**
      * @throws ParseException
      */
-    @Scheduled(cron = "0 00 01 * * ?")//触发时间 秒 分 时
+    @Scheduled(cron = "10 30 09 * * ?")//触发时间 秒 分 时
     public void selectMatterRemindByOne() throws ParseException {
         //得到当前时间的yyyy-MM-dd
         Date date = new Date();
@@ -113,7 +113,7 @@ public class AlarmTaskTime implements InitializingBean {
      *
      * @throws ParseException
      */
-    @Scheduled(cron = "0 00 01 * * ?")
+    @Scheduled(cron = "0 30 09 * * ?")
     public void endTimeRemind() throws ParseException {
         String date = getDate();
         List<Long> matterIds = matterService.selectMatterIdsByEndTime(date);
@@ -127,7 +127,7 @@ public class AlarmTaskTime implements InitializingBean {
     /**
      * 个人周期循环 月
      */
-    @Scheduled(cron = "0 00 01 * * ?")
+    @Scheduled(cron = "0 30 09 * * ?")
     public void forEachOne() throws ParseException {
         Date now = new Date();
         Calendar calendar = Calendar.getInstance();
@@ -168,9 +168,8 @@ public class AlarmTaskTime implements InitializingBean {
     /**
      * 周期定时
      */
-    @Scheduled(cron = "0 00 01 * * ?")
+    @Scheduled(cron = "0 30 09 * * ?")
     public void cycleMatter() {
-        System.err.println("周期定时!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         Date now = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd");
         String str = simpleDateFormat.format(now);
@@ -185,9 +184,7 @@ public class AlarmTaskTime implements InitializingBean {
                 if (list.size() > 0) {
                     list.forEach(dao -> {
                         //得到matter
-                        System.err.println("你快瞅瞅呀!!!!!!!:" + dao);
                         Matter matter = matterService.getById(dao.getMatterId());
-                        System.err.println("你快瞅瞅呀!!!!!!!:" + matter);
                         if (matter != null && matter.getIsOpen() == 0) {
                             Long oldId = matter.getMatterId();
                             matter.setIsPatriarch(0);
@@ -215,7 +212,6 @@ public class AlarmTaskTime implements InitializingBean {
                 }
             });
         }
-
     }
 
     /**
@@ -276,10 +272,10 @@ public class AlarmTaskTime implements InitializingBean {
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        selectMatterRemind();
+        /*selectMatterRemind();
         selectMatterRemindByOne();
         endTimeRemind();
         forEachOne();
-        cycleMatter();
+        cycleMatter();*/
     }
 }
