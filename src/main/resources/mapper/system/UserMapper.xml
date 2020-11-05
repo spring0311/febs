@@ -61,6 +61,9 @@
         <if test="user.username != null and user.username != ''">
             AND u.USERNAME = #{user.username}
         </if>
+        <if test="user.oaid != null and user.oaid != ''">
+            AND u.OAID = #{user.oaid}
+        </if>
         <if test="user.deptId != null and user.deptId != ''">
             AND d.DEPT_ID = #{user.deptId}
         </if>
