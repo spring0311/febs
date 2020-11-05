@@ -43,14 +43,7 @@
                     </div>
                     <div class="layui-form-item">
                         <label class="layui-form-label ">个人设置:</label>
-                        <!--<div class="layui-input-block">
-                            <select name="remindId"
-                                    lay-verify="required"
-                                    xm-select-direction="down"
-                                    xm-select="matter-update-remind-one"
-                                    xm-select-skin="default">
-                            </select>
-                        </div>-->
+
                         <table lay-filter="remindTable" lay-data="{id: 'remindTable'}"></table>
                     </div>
                     <div class="layui-form-item febs-hide">
@@ -169,41 +162,6 @@
                 },
             });
         }
-
-        /*remindForMe();
-
-        function remindForMe() {
-            formSelects.config('matter-update-remind-one', {
-                searchUrl: ctx + 'matter/reminds?matterId=' + matter.matterId + '&userId=' + currentUser.userId,
-                response: {
-                    statusCode: 200
-                },
-                beforeSuccess: function (id, url, searchVal, result) {
-                    var data = result.data;
-                    //console.log("data:" + data);
-                    var tranData = [];
-                    for (var i = 0; i < data.length; i++) {
-                        //console.log("data[i].remindTime:" + data[i].remindTime);
-                        tranData.push({
-                            name: data[i].remindTime,
-                            value: data[i].remindId,
-                        })
-                    }
-                    result.data = tranData;
-                    return result;
-                },
-                error: function (id, url, searchVal, err) {
-                    console.error(err);
-                    febs.alert.error('获取用户列表失败');
-                },
-                success: function () {
-                    if (matter.remindId != null) {
-                        formSelects.value('matter-update-remind-one', matter.remindId.split(','));
-                    }
-                    //console.log(matter.userId);
-                },
-            });
-        }*/
 
 
         /**

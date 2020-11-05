@@ -82,10 +82,10 @@ public class MatterController extends BaseController {
     @ResponseBody
     @ControllerEndpoint(operation = "定时任务", exceptionMessage = "执行失败")
     public FebsResponse flushMatter() throws Exception {
-        selectMatterRemind();
-        endTimeRemind();
         forEachOne();
         cycleMatter();
+        endTimeRemind();
+        selectMatterRemind();
         selectMatterRemindByOne();
         return new FebsResponse().success();
     }
@@ -411,7 +411,6 @@ public class MatterController extends BaseController {
     @ResponseBody
     //@RequiresPermissions("matter:update")
     public FebsResponse getMatterRemind(@PathVariable("matterId") Long matterId) {
-        //System.err.println("updateMatter:" + matter);
         Remind remind = new Remind();
         remind.setMatterId(matterId);
         remind.setUserBy(0);
