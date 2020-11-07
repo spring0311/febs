@@ -7,12 +7,14 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 /**
  * @author MrBird
  */
+@Repository
 public interface UserMapper extends BaseMapper<User> {
 
     /**
@@ -45,6 +47,7 @@ public interface UserMapper extends BaseMapper<User> {
 
     /**
      * 根据分组ID查询组成员
+     *
      * @param teamId
      * @return
      */
@@ -52,7 +55,16 @@ public interface UserMapper extends BaseMapper<User> {
 
     /**
      * 查询最大用户ID
+     *
      * @return
      */
     Long findMaxUserId();
+
+    /**
+     * 通过映射查询用户
+     *
+     * @param matterId
+     * @return
+     */
+    <T> IPage<User> findUserByMatterId(Page<T> page, Long matterId);
 }

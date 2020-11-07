@@ -6,15 +6,19 @@ import cc.mrbird.febs.common.entity.FebsConstant;
 import cc.mrbird.febs.common.controller.BaseController;
 import cc.mrbird.febs.common.entity.FebsResponse;
 import cc.mrbird.febs.common.entity.QueryRequest;
+import cc.mrbird.febs.common.utils.SortUtil;
 import cc.mrbird.febs.system.entity.*;
 import cc.mrbird.febs.system.mapper.TeamMapper;
+import cc.mrbird.febs.system.mapper.UserMapper;
 import cc.mrbird.febs.system.mapper.UserMatterMapper;
 import cc.mrbird.febs.system.service.*;
 
 import cc.mrbird.febs.task.AlarmTaskTime;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.common.collect.ListMultimap;
 import com.wuwenze.poi.ExcelKit;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 
@@ -70,7 +74,129 @@ public class MatterController extends BaseController {
     private final IUserDataPermissionService iUserDataPermissionService;
 
     @Autowired
+    private final UserMapper userMapper;
+
+    @Autowired
     private AlarmTaskTime alarmTaskTime;
+
+    @GetMapping("matter/listUserIndex")
+    @ResponseBody
+    @RequiresPermissions("matter:view")
+    public FebsResponse matterIndexUser(QueryRequest request, Matter matter) {
+        QueryWrapper<UserMatter> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("MATTER_ID", matter.getMatterId());
+        List<UserMatter> userMatters = userMatterMapper.selectList(queryWrapper);
+        Page<User> page = new Page<>(request.getPageNum(), request.getPageSize());
+        page.setSearchCount(false);
+        page.setTotal(userMatters.size());
+        SortUtil.handlePageSort(request, page, "userId", FebsConstant.ORDER_ASC, false);
+        Map<String, Object> dataTable = getDataTable(this.userMapper.findUserByMatterId(page, matter.getMatterId()));
+        return new FebsResponse().success().data(dataTable);
+    }
+
+    @GetMapping("matter/listOutIndex")
+    @ResponseBody
+    @RequiresPermissions("matter:view")
+    public FebsResponse matterIndexListPOut(QueryRequest request, Matter matter, HttpServletRequest httpRequest) {
+        //System.err.println("MatterController:start...");
+        System.err.println("MatterController:" + matter);
+        matter.setIsOpen(0);
+        matter.setIsPatriarch(0);
+        QueryWrapper<Matter> queryWrapper = new QueryWrapper<>();
+        queryWrapper.setEntity(matter);
+        Page<Matter> page = new Page<>(request.getPageNum(), request.getPageSize());
+        page = this.matterService.page(page, queryWrapper);
+        SortUtil.handlePageSort(request, page, "end", FebsConstant.ORDER_ASC, true);
+        page = this.matterService.page(page, queryWrapper);
+        List<Matter> list = page.getRecords();
+        if (list.size() > 0)
+            list.forEach(dao -> {
+                dao.setOver(isFinishUnm(dao, 1));
+                dao.setNoOver(isFinishUnm(dao, 0));
+            });
+        page.setRecords(list);
+        Map<String, Object> dataTable = getDataTable(page);
+        return new FebsResponse().success().data(dataTable);
+    }
+
+    /**
+     * 子事项 完成情况
+     *
+     * @param matter
+     * @param finish
+     * @return
+     */
+    private Integer isFinishUnm(Matter matter, Integer finish) {
+        QueryWrapper<UserMatter> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("MATTER_ID", matter.getMatterId());
+        queryWrapper.eq("Finish", finish);
+        List<UserMatter> list = userMatterMapper.selectList(queryWrapper);
+        Integer unm = list.size();
+        return unm;
+    }
+
+    @GetMapping("matter/echarts")
+    @ResponseBody
+    @ControllerEndpoint(operation = "饼图统计", exceptionMessage = "执行失败")
+    public FebsResponse getEcharts(Matter matter) {
+        matter.setIsOpen(0);
+        matter.setIsPatriarch(1);
+        QueryWrapper<Matter> queryWrapper = new QueryWrapper<>();
+        queryWrapper.setEntity(matter);
+        List<Echarts> list = new ArrayList<>();
+        List<Matter> matters = matterService.list(queryWrapper);
+        matters.forEach(dao -> {
+            //查询未完成人数
+            Echarts echarts = new Echarts();
+            echarts.setName(dao.getMatterName());
+            echarts.setValue(getNoOverNum(dao));
+            if (getNoOverNum(dao) != 0 && getNoOverNum(dao) != null)
+                list.add(echarts);
+        });
+        list.forEach(xx -> {
+            System.err.println(xx);
+        });
+        return new FebsResponse().success().data(list);
+    }
+
+    private Integer num = 0;
+
+    /**
+     * 父事项参数
+     *
+     * @param matter
+     * @return
+     */
+    private Integer getNoOverNum(Matter matter) {
+        num = 0;
+        QueryWrapper<Matter> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("PATRIARCH_ID", matter.getMatterId());
+        queryWrapper.eq("IS_OPEN", 0);
+        List<Matter> matters = matterService.list(queryWrapper);
+        if (matters.size() > 0) {
+            matters.forEach(dao -> {
+                num = num + getUserMatterNum(dao);
+            });
+        }
+        return num;
+    }
+
+    /**
+     * 子事项
+     *
+     * @param matter
+     * @return
+     */
+    private Integer getUserMatterNum(Matter matter) {
+        QueryWrapper<UserMatter> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("MATTER_ID", matter.getMatterId());
+        queryWrapper.eq("Finish", 0);
+        List<UserMatter> list = userMatterMapper.selectList(queryWrapper);
+        if (list.size() > 0) {
+            return list.size();
+        }
+        return 0;
+    }
 
     @GetMapping(FebsConstant.VIEW_PREFIX + "matter")
     public String matterIndex() {

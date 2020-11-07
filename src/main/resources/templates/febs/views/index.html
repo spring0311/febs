@@ -41,6 +41,11 @@
         margin: 1rem;
     }
 
+    #febs-index .userTable {
+        width: 100%;
+        margin: 1rem;
+    }
+
     #febs-index .login-count-table .count {
         padding-top: .8rem;
         font-size: 1rem;
@@ -120,74 +125,149 @@
                 </div>
             </div>
         </div>
-        <!--事务-->
         <div class="layui-row ">
+            <div class="layui-col-md5 ">
+                <div id="main" style="width: 500px;height:400px;"></div>
+            </div>
+            <div class="layui-col-md7 ">
+                <table class="matterIndexTable" lay-filter="matterIndexTable"
+                       lay-data="{id: 'matterIndexTable'}"></table>
+            </div>
+        </div>
+        <!--事务-->
+        <!--<div class="layui-row ">
             <div class="layui-col-md12 layui-bg-green">
                 <h1 style="text-align: center">事务展示</h1>
             </div>
-        </div>
+        </div>-->
         <div class="layui-col-md12 layui-col-sm12 layui-col-xs12">
-            <table class="matterTable" lay-filter="matterTable" lay-data="{id: 'matterTable'}"></table>
+
         </div>
         <!--职务-->
-        <div class="layui-row">
-            <div class="layui-col-md12 layui-bg-green">
-                <h1 style="text-align: center">人员展示</h1>
-            </div>
-        </div>
-        <div class="layui-col-md12 layui-col-sm12 layui-col-xs12">
+        <div class="layui-col-md12 layui-col-sm12 layui-col-xs12" style="min-height: 600px">
             <table class="userTable" lay-filter="userTable" lay-data="{id: 'userTable'}"></table>
         </div>
     </div>
 </div>
+<script>
+</script>
+<script type="text/html" id="matter-finish-index">
+    {{#
+    var finish = {
+    1: {title: '已完成', color: 'green'},
+    0: {title: '未完成', color: 'volcano'}
+    }[d.finish];
+    }}
+    <span class="layui-badge febs-bg-{{finish.color}}">{{ finish.title }}</span>
+</script>
 <script data-th-inline="none" type="text/javascript">
+    var number;
+    var tableName;
+    var myChart = echarts.init(document.getElementById('main'));
+
+    // 绘制图表。
     layui.use(['apexcharts', 'febs', 'jquery', 'util', 'table'], function () {
         var $ = layui.jquery,
             util = layui.util,
             $view = $('#febs-index'),
             febs = layui.febs,
-            //table = layui.table,
+            table = layui.table,
             //sortObject = {field: 'createTime', type: null},
             //$searchForm = $view.find('form'),
             tableIns,
             tableIn;
+        loginTest();
 
-        matterTable();
-
-
-        userTable();
-        console.log(currentUser.deptId);
-
-        function matterTable() {
-            tableIns = febs.table.init({
-                elem: $view.find('.matterTable'),
-                id: 'matterTable',
-                url: ctx + 'matter/indexList',
-                cols: [[
-                    /*{field: 'deptName', title: '归口部门', width: 100},
-                    {field: 'matterName', title: '事务名称', width: 150},
-                    {field: 'matterText', title: '工作内容', maxWidth: 100},
-                    {field: 'name', title: '责任人', maxWidth: 100},
-                    //{field: 'start', title: '开始时间', maxWidth: 100, sort: true},
-                    {field: 'endStr', title: '完成时间', maxWidth: 100, sort: true},*/
-                    {field: 'matterName', title: '工作事项', minWidth: 150},
-                    {field: 'matterOpen', title: '开始时间'},
-                    {field: 'end', title: '结束时间'},
-                    //{field: 'name', title: '责任人', width: 200},
-                    {field: 'overName', title: '已完成责任人'},
-                    {field: 'noOverName', title: '未完成责任人'},
-                    {field: 'over', title: '已完成人数'},
-                    {field: 'noOver', title: '未完成人数'},
-                ]]
+        function loginTest() {
+            febs.get(ctx + 'matter/echarts', null, function (date) {
+                number = date.data;
+                eac(number);
+                console.log(number[0].name);
+                matterIndexTable(number[0].name);
             });
         }
 
-        function userTable() {
+
+        function eac(number) {
+            tableName = number[0].name;
+            console.log(tableName);
+            console.log(number)
+            var option = {
+                title: {
+                    text: '未完成人数统计',
+                    left: 'center'
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{a} <br/>{b} : {c} ({d}%)'
+                },
+                /*legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎']
+                },*/
+                series: [
+                    {
+                        name: '人数统计',
+                        type: 'pie',
+                        radius: '75%',
+                        center: ['50%', '60%'],
+                        data: number,
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }
+                ],
+                selected: {
+                    // 选中'系列1'
+                    '公司月会议': true,
+                }
+            };
+            myChart.setOption(option);
+
+        }
+
+        myChart.on('click', function (params) {
+            console.log(params.name);
+            userTable(0);
+            matterIndexTable(params.name);
+        });
+
+        console.log(currentUser.deptId);
+
+        function matterIndexTable(name) {
+            tableIns = febs.table.init({
+                elem: $view.find('.matterIndexTable'),
+                id: 'matterIndexTable',
+                url: ctx + 'matter/listOutIndex?matterName=' + name,
+                cols: [[
+                    {field: 'matterName', title: '工作事项', event: 'seepage'},
+                    {field: 'matterOpen', title: '开始时间', event: 'seepage'},
+                    {field: 'end', title: '结束时间', event: 'seepage'},
+                    {field: 'over', title: '已完成人数', width: 110, event: 'seepage'},
+                    {field: 'noOver', title: '未完成人数', width: 110, event: 'seepage'},
+                ]],
+                done: function (res, curr, count) {
+                    $('.layui-table-view[lay-id="matterIndexTable"]').children('.layui-table-box').children('.layui-table-body').find('table tbody tr[data-index="0"]').click();
+                }
+            });
+        }
+
+        table.on('row(matterIndexTable)', function (obj) {
+            userTable(obj.data.matterId);
+        })
+
+        function userTable(matterId) {
             tableIn = febs.table.init({
                 elem: $view.find('.userTable'),
                 id: 'userTable',
-                url: ctx + 'user/list',
+                url: ctx + 'matter/listUserIndex?matterId=' + matterId,
                 cols: [[
+                    {title: '完成状态', templet: '#matter-finish-index', width: 90},
                     {field: 'userEmpno', title: '员工号'},
                     {field: 'name', title: '姓名', minWidth: 100},
                     {field: 'deptName', title: '部门'},
@@ -337,4 +417,6 @@
         })
 
     });
+
+
 </script>

@@ -82,7 +82,7 @@ public class MatterServiceImpl extends ServiceImpl<MatterMapper, Matter> impleme
         QueryWrapper<Matter> matterQueryWrapper = new QueryWrapper<>();
         if (matter.getDeptId() == null) {
             matterQueryWrapper.eq("PATRIARCH_ID", matter.getPatriarchId());
-            matterQueryWrapper.eq("IS_PATRIARCH", matter.getIsPatriarch());
+            matterQueryWrapper.eq("PATRIARCH_ID", matter.getPatriarchId());
         } else {
             matterQueryWrapper.setEntity(matter);
         }

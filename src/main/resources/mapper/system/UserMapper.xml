@@ -74,7 +74,7 @@
             AND u.STATUS = #{user.status}
         </if>
         <if test="user.name != null and user.name != ''">
-            AND u.NAME  like CONCAT(CONCAT('%',#{user.name}),'%')
+            AND u.NAME like CONCAT(CONCAT('%',#{user.name}),'%')
         </if>
         <if test="user.mobile != null and user.mobile != ''">
             AND u.MOBILE = #{user.mobile}
@@ -110,7 +110,8 @@
         <include refid="countUserDetailSql"/>
     </select>
 
-    <select id="findUserDetailPage" parameterType="user" resultType="cc.mrbird.febs.system.entity.User" databaseId="oracle">
+    <select id="findUserDetailPage" parameterType="user" resultType="cc.mrbird.febs.system.entity.User"
+            databaseId="oracle">
         <include refid="findUserDetailSql"/>
     </select>
 
@@ -186,8 +187,33 @@
             u.USER_ID;
     </select>
 
+
     <select id="findMaxUserId" resultType="java.lang.Long">
         select max(to_number(USER_ID))
         from t_user
+    </select>
+
+
+    <select id="findUserByMatterId" resultType="cc.mrbird.febs.system.entity.User">
+        SELECT
+            u.USER_ID userId,
+            u.POST,
+            u.NAME,
+            u.USER_EMPNO userEmpno,
+            um.Finish finish,
+            d.DEPT_NAME deptName
+        FROM
+            T_USER u
+        LEFT JOIN T_USER_MATTER um ON (u.USER_ID = um.USER_ID)
+        LEFT JOIN T_DEPT d ON (u.DEPT_ID = d.DEPT_ID)
+        WHERE
+            um.MATTER_ID=${matterId}
+        GROUP BY
+            u.USER_ID,
+            u.POST,
+            u.NAME,
+            u.USER_EMPNO ,
+            um.Finish,
+            d.DEPT_NAME
     </select>
 </mapper>
