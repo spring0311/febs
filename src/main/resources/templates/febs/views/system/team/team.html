@@ -1,4 +1,4 @@
-<div class="layui-fluid layui-anim febs-anim" id="febs-team" lay-title="分组管理">
+<div class="layui-fluid layui-anim febs-anim" id="febs-team" lay-title="群管理">
     <div class="layui-row layui-col-space8 febs-container">
         <div class="layui-col-md12 layui-col-sm0 layui-col-xs12">
             <div class="layui-card">
@@ -9,7 +9,7 @@
                             <div class="layui-col-md9 layui-col-sm9 layui-col-xs9">
                                 <div class="layui-form-item">
                                     <div class="layui-inline">
-                                        <label class="layui-form-label layui-form-label-sm">分组名称</label>
+                                        <label class="layui-form-label layui-form-label-sm">群名称</label>
                                         <div class="layui-input-inline">
                                             <input type="text" name="teamName" autocomplete="off" class="layui-input">
                                         </div>
@@ -80,7 +80,7 @@
                 var checkStatus = table.checkStatus('teamTable');
                 if (name === 'add') {
                     //resetRoleForm();
-                    febs.modal.open('新增分组', 'system/team/add', {
+                    febs.modal.open('新增群', 'system/team/add', {
                         btn: ['提交', '重置'],
                         //area: $(window).width() <= 750 ? '95%' : '50%',
                         area: $(window).width() <= 750 ? '95%' : '660px',
@@ -96,9 +96,9 @@
                 }
                 if (name === 'delete') {
                     if (!checkStatus.data.length) {
-                        febs.alert.warn('请选择需要删除的分组');
+                        febs.alert.warn('请选择需要删除的群');
                     } else {
-                        febs.modal.confirm('删除分组', '确定删除所选分组？', function () {
+                        febs.modal.confirm('删除群', '确定删除所选群？', function () {
                             var teamIds = [];
                             layui.each(checkStatus.data, function (key, item) {
                                 teamIds.push(item.teamId);
@@ -116,11 +116,11 @@
             },
             options: [{
                 name: 'add',
-                title: '新增分组',
+                title: '新增群',
                 perms: 'team:view'
             }, {
                 name: 'delete',
-                title: '删除分组',
+                title: '删除群',
                 perms: 'team:view'
             }, /*{
                 name: 'export',
@@ -139,7 +139,7 @@
             if (layEvent === 'edit') {
                 //
                 var checkStatus = table.checkStatus('teamTable');
-                febs.modal.view('分组修改', 'system/team/update/' + data.teamId, {
+                febs.modal.view('群修改', 'system/team/update/' + data.teamId, {
                     btn: ['提交', '取消'],
                     area: $(window).width() <= 750 ? '95%' : '660px',
                     yes: function (index, layero) {
@@ -152,7 +152,7 @@
                 });
             }
             if (layEvent === 'del') {
-                febs.modal.confirm('删除分组', '确定删除该分组？', function () {
+                febs.modal.confirm('删除群', '确定删除该群？', function () {
                     console.log("teamId" + data.teamId);
                     deleteRoles(data.teamId);
                 });
@@ -181,9 +181,9 @@
                 url: ctx + 'team/list',
                 cols: [[
                     {type: 'checkbox'},
-                    {field: 'teamName', title: '分组名称', minWidth: 120},
-                    {field: 'described', title: '分组描述'},
-                    {field: 'name', title: '分组成员'},
+                    {field: 'teamName', title: '群名称', minWidth: 120},
+                    {field: 'described', title: '群描述'},
+                    {field: 'name', title: '群成员'},
                     //{field: 'createTime', title: '创建时间', minWidth: 180},
                     {title: '操作', toolbar: '#team-option', width: 100}
                 ]]
@@ -216,7 +216,7 @@
 
         function deleteRoles(teamId) {
             febs.get(ctx + 'team/delete/' + teamId, null, function () {
-                febs.alert.success('删除分组成功');
+                febs.alert.success('删除群成功');
                 $query.trigger('click');
             })
         }
@@ -224,12 +224,12 @@
         var addOrUpdateRole = function (data) {
             if (data.teamId && $header.text() === '修改角色') {
                 febs.post(ctx + 'team/update', data, function () {
-                    febs.alert.success('修改分组成功');
+                    febs.alert.success('修改群成功');
                     $query.trigger('click');
                 });
             } else {
                 febs.post(ctx + 'team', data, function () {
-                    febs.alert.success('新增分组成功');
+                    febs.alert.success('新增群成功');
                     $query.trigger('click');
                 });
             }

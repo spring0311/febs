@@ -337,6 +337,7 @@ public class MatterServiceImpl extends ServiceImpl<MatterMapper, Matter> impleme
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public Long maxMatterId() {
         return matterMapper.findMaxId();
     }

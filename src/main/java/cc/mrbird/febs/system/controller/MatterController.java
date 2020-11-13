@@ -27,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -138,7 +140,9 @@ public class MatterController extends BaseController {
     @GetMapping("matter/echarts")
     @ResponseBody
     @ControllerEndpoint(operation = "饼图统计", exceptionMessage = "执行失败")
-    public FebsResponse getEcharts(Matter matter) {
+    public FebsResponse getEcharts(Matter matter, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        matter.setDeptId(Long.valueOf(session.getAttribute("deptId").toString()));
         matter.setIsOpen(0);
         matter.setIsPatriarch(1);
         QueryWrapper<Matter> queryWrapper = new QueryWrapper<>();
@@ -325,10 +329,11 @@ public class MatterController extends BaseController {
     }
 
     @ControllerEndpoint(operation = "新增事项", exceptionMessage = "新增事项失败")
-    @PostMapping("matter/addOne")
+    @GetMapping("matter/addOne")
     @ResponseBody
     @RequiresPermissions("matter:view")
     @Valid
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public FebsResponse addMatterOne(@Valid Matter matter, HttpServletRequest request) throws ParseException {
         matter.setLongUserId(Long.valueOf(request.getSession().getAttribute("userId").toString()));
         matter.setDeptId(0l);
@@ -336,7 +341,8 @@ public class MatterController extends BaseController {
         matter.setIsOpen(0);
         System.err.println("addMatterOne:" + matter);
         this.matterService.createMatterOne(matter);
-        return new FebsResponse().success();
+        Long matterId = this.matterService.maxMatterId();
+        return new FebsResponse().success().data(matterId);
     }
 
     @ControllerEndpoint(operation = "删除事项", exceptionMessage = "删除事项失败")
@@ -734,17 +740,15 @@ public class MatterController extends BaseController {
             } else if ("2".equals(matter.getStatus())) {
                 calendarObject.setName(dao.getEndStr());
             }
-            String zt = null;
             if (dao.getImportantOne() == 1 && dao.getUrgentOne() == 1) {
-                zt = "l1";
+                calendarObject.setColour("l1");
             } else if (dao.getImportantOne() == 1 && dao.getUrgentOne() == 0) {
-                zt = "l2";
+                calendarObject.setColour("l2");
             } else if (dao.getImportantOne() == 0 && dao.getUrgentOne() == 1) {
-                zt = "l3";
+                calendarObject.setColour("l3");
             } else if (dao.getImportantOne() == 0 && dao.getUrgentOne() == 0) {
-                zt = "l4";
+                calendarObject.setColour("l4");
             }
-            calendarObject.setColour(zt);
             calendarObjects.add(calendarObject);
         });
         return new FebsResponse().success().data(test(calendarObjects));

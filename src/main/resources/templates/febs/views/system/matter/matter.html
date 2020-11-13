@@ -134,7 +134,10 @@
     <span shiro:lacksPermission="matter:view">
         <span class="layui-badge-dot febs-bg-orange"></span> 无权限
     </span>
-    <a lay-event="edit"><i class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
+    <!--<a href="javascript:;" data-d="{{d.descript}}" onmouseover="show_shopm(this)">{{d.name}}</a>-->
+    <a href="javascript:;" lay-event="edit"
+       onmouseover="showshopm(this)" onmouseout="moverOut(this)" id="{{d.matterId}}"><i
+            class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
     <a lay-event="out"><i class="layui-icon febs-edit-area febs-blue">&#xe63c;</i></a>
     <a lay-event="time"><i class="layui-icon febs-edit-area febs-blue">&#xe60e;</i></a>
     <a lay-event="del"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
@@ -153,8 +156,29 @@
             $searchForm = $view.find('form'),
             sortObject = {field: 'matterName', type: null},
             matterId,
+            subtips,
             tableIns;
+
+        moverOut = function () {
+            layer.closeAll();
+        }
+
+        showshopm = function (t) {
+            var row = $(t).attr('id');
+            console.log(row);
+            //小tips
+            openMsg(t);
+        }
+
         /*selectTable,*/
+
+
+        function openMsg(t) {
+            subtips = layer.tips('删除', t, {
+                tips: [1, '#3595CC'],
+                time: 1000
+            })
+        }
 
 
         form.render();
@@ -287,7 +311,7 @@
                 febs.modal.open(data.matterName + ',事项日程单', 'system/matter/out/' + matterId, {
                     area: $(window).width() <= 750 ? '90%' : '50%',
                     btn: ['取消'],
-                    offset: '200px',
+                    offset: '100px',
                     /*yes: function (index, layero) {
                         closeMatters();
                     },*/
@@ -335,6 +359,7 @@
                     {title: '操作', toolbar: '#matter-option', width: 160}
                 ]]
             });
+
         }
 
 
@@ -428,5 +453,7 @@
                 $('#febs-matter').find('#reset').click();
             });
         }
+
+
     })
 </script>

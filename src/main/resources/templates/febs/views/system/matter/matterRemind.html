@@ -36,7 +36,7 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">新增提醒:</label>
                         <div class="layui-input-inline">
-                            <input type="datetime" name="" id="febs-form-group-date-1"
+                            <input type="datetime" name="" id="febs-form-group-date-remind"
                                    lay-verify="date" placeholder="开始时间" autocomplete="off"
                                    class="layui-input" pattern="yyyy-MM-dd">
                         </div>
@@ -91,6 +91,23 @@
         initMatterValue();
         agaFormSelect();
         initTables();
+        addRemindTime();
+
+        /**
+         * 新增
+         */
+        function addRemindTime() {
+            laydate.render({
+                elem: '#febs-form-group-date-remind',
+                format: 'yyyy-MM-dd',
+                value: new Date(),
+                type: 'date',
+                done: function (value, date) {
+                    test(value, date);
+                }
+            });
+        }
+
 
         function initTables() {
             tableIns = febs.table.init({
@@ -103,6 +120,7 @@
                     {title: '操作', toolbar: '#remind-option', width: 100}
                 ]]
             });
+            addRemindTime();
         }
 
         table.on('tool(remindTable)', function (obj) {
@@ -162,20 +180,6 @@
                 },
             });
         }
-
-
-        /**
-         * 新增
-         */
-        laydate.render({
-            elem: '#febs-form-group-date-1',
-            format: 'yyyy-MM-dd',
-            value: new Date(),
-            type: 'date',
-            done: function (value, date) {
-                test(value, date);
-            }
-        });
 
 
         function test(value, date) {

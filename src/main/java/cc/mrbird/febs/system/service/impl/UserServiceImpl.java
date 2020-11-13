@@ -88,9 +88,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void createUser(User user) {
-        System.err.println("createUser:user:"+user);
+        System.err.println("createUser:user:" + user);
         user.setCreateTime(new Date());
         user.setStatus(User.STATUS_VALID);
         user.setAvatar(User.DEFAULT_AVATAR);
@@ -99,6 +99,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         user.setPassword(Md5Util.encrypt(user.getUsername(), User.DEFAULT_PASSWORD));
         this.save(user);
         // 保存用户角色
+        System.err.println(user);
         user.setUserId(this.baseMapper.findMaxUserId());
         String[] roles = user.getRoleId().split(StringPool.COMMA);
         setUserRoles(user, roles);
@@ -122,7 +123,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void updateUser(User user) {
         String username = user.getUsername();
         // 更新用户
@@ -220,7 +221,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
     }
 
-    private void setUserRoles(User user, String[] roles) {
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void setUserRoles(User user, String[] roles) {
         List<UserRole> userRoles = new ArrayList<>();
         Arrays.stream(roles).forEach(roleId -> {
             UserRole userRole = new UserRole();
@@ -231,7 +233,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         userRoleService.saveBatch(userRoles);
     }
 
-    private void setUserDataPermissions(User user, String[] deptIds) {
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void setUserDataPermissions(User user, String[] deptIds) {
         List<UserDataPermission> userDataPermissions = new ArrayList<>();
         Arrays.stream(deptIds).forEach(deptId -> {
             UserDataPermission permission = new UserDataPermission();

@@ -5,7 +5,7 @@
             <form class="layui-form layui-table-form" action=""
                   lay-filter="team-form">
                 <div class="layui-form-item">
-                    <label class="layui-form-label febs-form-item-require">分组名称：</label>
+                    <label class="layui-form-label febs-form-item-require">群名称：</label>
                     <div class="layui-input-block">
                         <input type="text" name="teamName" autocomplete="off"
                                class="layui-input" minlength="2" maxlength="10"
@@ -13,7 +13,7 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">分组描述：</label>
+                    <label class="layui-form-label">群描述：</label>
                     <div class="layui-input-block">
             <textarea name="described" maxlength="50"
                       class="layui-textarea"></textarea>
@@ -21,7 +21,7 @@
                 </div>
                 <!-- 成员 -->
                 <div class="layui-form-item">
-                    <label class="layui-form-label febs-form-item-require">添加组员：</label>
+                    <label class="layui-form-label febs-form-item-require">添加成员：</label>
                     <div class="layui-input-block">
                         <select name="userId"
                                 lay-verify="required"
@@ -98,7 +98,7 @@
             febs.post(ctx + 'team/add', data, function () {
                 //console.log(data);
                 layer.closeAll();
-                febs.alert.success('新增角色成功');
+                febs.alert.success('新增群成功');
                 $('#febs-team').find('#query').click();
             });
 

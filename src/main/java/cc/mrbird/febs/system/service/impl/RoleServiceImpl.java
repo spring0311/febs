@@ -83,7 +83,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         List<String> roleIdList = new ArrayList<>();
         roleIdList.add(String.valueOf(role.getRoleId()));
         this.roleMenuService.deleteRoleMenusByRoleId(roleIdList);
-        saveRoleMenus(role);
+        saveRoleMenuById(role);
         shiroRealm.clearCache();
     }
 
@@ -119,6 +119,20 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
                 RoleMenu roleMenu = new RoleMenu();
                 roleMenu.setMenuId(Long.valueOf(menuId));
                 roleMenu.setRoleId(this.baseMapper.findMaxId());
+                roleMenus.add(roleMenu);
+            });
+            roleMenuService.saveBatch(roleMenus);
+        }
+    }
+
+    private void saveRoleMenuById(Role role) {
+        if (StringUtils.isNotBlank(role.getMenuIds())) {
+            String[] menuIds = role.getMenuIds().split(StringPool.COMMA);
+            List<RoleMenu> roleMenus = new ArrayList<>();
+            Arrays.stream(menuIds).forEach(menuId -> {
+                RoleMenu roleMenu = new RoleMenu();
+                roleMenu.setMenuId(Long.valueOf(menuId));
+                roleMenu.setRoleId(role.getRoleId());
                 roleMenus.add(roleMenu);
             });
             roleMenuService.saveBatch(roleMenus);

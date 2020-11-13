@@ -36,7 +36,9 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
 
     @Override
     public List<DeptTree<Dept>> findDepts() {
-        List<Dept> depts = this.baseMapper.selectList(new QueryWrapper<>());
+        QueryWrapper<Dept> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByAsc("ORDER_NUM");
+        List<Dept> depts = this.baseMapper.selectList(queryWrapper);
         List<DeptTree<Dept>> trees = this.convertDepts(depts);
         return TreeUtil.buildDeptTree(trees);
     }
@@ -50,8 +52,8 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
         }
         queryWrapper.lambda().orderByAsc(Dept::getOrderNum);
 
-        //List<Dept> depts = this.baseMapper.selectList(queryWrapper);
-        List<Dept> depts = this.baseMapper.findDeptByDept(dept);
+        List<Dept> depts = this.baseMapper.selectList(queryWrapper);
+        //List<Dept> depts = this.baseMapper.findDeptByDept(dept);
         List<DeptTree<Dept>> trees = this.convertDepts(depts);
         return TreeUtil.buildDeptTree(trees);
     }
@@ -123,9 +125,9 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements ID
         }
     }
 
-	@Override
-	public Dept findById(Integer deptId) {
-		Dept dept=baseMapper.selectById(deptId);
-		return dept;
-	}
+    @Override
+    public Dept findById(Integer deptId) {
+        Dept dept = baseMapper.selectById(deptId);
+        return dept;
+    }
 }

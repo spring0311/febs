@@ -17,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -65,8 +67,9 @@ public class UserController extends BaseController {
     @PostMapping
     @RequiresPermissions("user:add")
     @ControllerEndpoint(operation = "新增用户", exceptionMessage = "新增用户失败")
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public FebsResponse addUser(@Valid User user) {
-        System.err.println("addUser:"+user);
+        System.err.println("addUser:" + user);
         this.userService.createUser(user);
         return new FebsResponse().success();
     }
@@ -83,6 +86,7 @@ public class UserController extends BaseController {
     @PostMapping("update")
     @RequiresPermissions("user:update")
     @ControllerEndpoint(operation = "修改用户", exceptionMessage = "修改用户失败")
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public FebsResponse updateUser(@Valid User user) {
         if (user.getUserId() == null) {
             throw new FebsException("用户ID为空");

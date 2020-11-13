@@ -161,6 +161,7 @@
         form.render();
         initTable();
 
+
         $query.on('click', function () {
             var params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
             tableIns.reload({where: params, page: {curr: 1}});
@@ -223,6 +224,7 @@
         });
 
         table.on('tool(matterTableOne)', function (obj) {
+            console.log(obj);
             var data = obj.data,
                 layEvent = obj.event;
             if (layEvent === 'del') {
@@ -379,11 +381,23 @@
         })
 
         var addMatterOne = function (data) {
-            febs.post(ctx + 'matter/addOne', data, function () {
+            febs.get(ctx + 'matter/addOne', data, function (ret) {
                 layer.closeAll();
-                febs.alert.success('新增成功');
+                febs.alert.success('新增成功,请自行设置提醒时间!');
                 $query.trigger('click');
+                console.log(ret.data);
+                febs.modal.open(data.matterName + ',提示时间设置', 'system/matter/remind/' + ret.data, {
+                    area: $(window).width() <= 750 ? '90%' : '50%',
+                    btn: ['提交', '跳过'],
+                    yes: function (index, layero) {
+                        layer.closeAll();
+                    },
+                    btn2: function () {
+                        layer.closeAll();
+                    }
+                });
             });
+
         }
 
         var updateMatter = function (data) {
@@ -391,7 +405,6 @@
                 layer.closeAll();
                 febs.alert.success('修改成功');
                 $query.trigger('click');
-
             });
         }
 

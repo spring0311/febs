@@ -75,12 +75,7 @@ public class ShiroRealm extends AuthorizingRealm {
         // 获取用户权限集
         List<Menu> permissionList = this.menuService.findUserPermissions(userName);
         Set<String> permissionSet = permissionList.stream().map(Menu::getPerms).collect(Collectors.toSet());
-        for (String per : permissionSet
-        ) {
-            System.err.println("permissionSet.foreach:" + per);
-        }
         simpleAuthorizationInfo.setStringPermissions(permissionSet);
-        System.err.println("simpleAuthorizationInfo:" + simpleAuthorizationInfo);
         return simpleAuthorizationInfo;
     }
 

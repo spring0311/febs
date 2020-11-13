@@ -13,7 +13,7 @@ spring:
     username: c##wei
     password: 123456
     driver-class-name: oracle.jdbc.OracleDriver
-    url: jdbc:oracle:thin:@//192.168.56.1:1521/orcl
+    url: jdbc:oracle:thin:@//127.0.0.1:1521/orcl
 
   jpa:
     database: oracle
