@@ -136,10 +136,18 @@
     <span class="layui-badge febs-bg-{{finish.color}}">{{ finish.title }}</span>
 </script>
 <script type="text/html" id="matter-one-option">
-    <a lay-event="edit"><i class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
-    <a lay-event="time"><i class="layui-icon febs-edit-area febs-blue">&#xe60e;</i></a>
-    <a lay-event="finish"><i class="layui-icon febs-edit-area febs-blue">&#xe605;</i></a>
-    <a lay-event="del"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+    <a lay-event="edit" ref="javascript:;"
+       onmouseover="showshopmOne(this)" onmouseout="moverOutOne(this)"><i
+            class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
+    <a lay-event="time" ref="javascript:;"
+       onmouseover="showshopmOne(this)" onmouseout="moverOutOne(this)"><i
+            class="layui-icon febs-edit-area febs-blue">&#xe60e;</i></a>
+    <a lay-event="finish" ref="javascript:;"
+       onmouseover="showshopmOne(this)" onmouseout="moverOutOne(this)"><i
+            class="layui-icon febs-edit-area febs-blue">&#xe605;</i></a>
+    <a lay-event="del" ref="javascript:;"
+       onmouseover="showshopmOne(this)" onmouseout="moverOutOne(this)"><i
+            class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
 </script>
 <script data-th-inline="none" type="text/javascript">
     layui.use(['dropdown', 'jquery', 'laydate', 'form', 'table', 'febs'], function () {
@@ -155,11 +163,39 @@
             $searchForm = $view.find('form'),
             sortObject = {field: 'createTime', type: null},
             matterId,
+            subtips,
             deptId,
             tableIns;
 
         form.render();
         initTable();
+
+        showshopmOne = function (t) {
+            var event = $(t).attr('lay-event');
+            console.log(event);
+            //小tips
+            if (event == 'edit') {
+                openMsgOne('修改事项', t, '#3595CC');
+            } else if (event == 'time') {
+                openMsgOne('提醒时间设置', t, '#3595CC');
+            } else if (event == 'finish') {
+                openMsgOne('修改完成状态', t, '#3595CC');
+            } else if (event == 'del') {
+                openMsgOne('删除事项', t, '#FF4500');
+            }
+        }
+
+
+        function openMsgOne(showOut, t, color) {
+            subtips = layer.tips(showOut, t, {
+                tips: [2, color],
+                time: 1000
+            })
+        }
+
+        moverOutOne = function () {
+            layer.close(subtips);
+        }
 
 
         $query.on('click', function () {
