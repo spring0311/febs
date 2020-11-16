@@ -129,6 +129,9 @@ public class CycleController extends BaseController {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date periodOpen = simpleDateFormat.parse(period.getPeriodOpenStr());
         Date periodEnd = simpleDateFormat.parse(period.getPeriodEndStr());
+        if (periodOpen.getTime() > periodEnd.getTime()) {
+            throw new FebsException("请检查起止时间!");
+        }
         period.setOpenStr(period.getPeriodOpenStr());
         period.setPeriodOpen(periodOpen);
         period.setPeriodEnd(periodEnd);
