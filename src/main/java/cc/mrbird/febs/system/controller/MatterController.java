@@ -57,6 +57,8 @@ import java.util.*;
 @CrossOrigin
 public class MatterController extends BaseController {
 
+    private StringBuilder str = new StringBuilder("");
+
     @Autowired
     private final IMatterService matterService;
 
@@ -751,18 +753,17 @@ public class MatterController extends BaseController {
             }
             calendarObjects.add(calendarObject);
         });
-        return new FebsResponse().success().data(test(calendarObjects));
+        return new FebsResponse().success().data(viewDispose(calendarObjects));
     }
 
-    private String str = null;
-
-    private List<CalendarObject> test(List<CalendarObject> calendarObjects) {
+    private List<CalendarObject> viewDispose(List<CalendarObject> calendarObjects) {
         calendarObjects.forEach(calendarObject -> {
-            str = calendarObject.getColour();
+            str = str.delete(0, str.length());
+            str = str.append(calendarObject.getColour());
             calendarObjects.forEach(calendarObject_ -> {
                 if (calendarObject.getName().equals(calendarObject_.getName())) {
-                    str = str + "," + calendarObject_.getColour();
-                    calendarObject.setColour(str);
+                    str = str.append("," + calendarObject_.getColour());
+                    calendarObject.setColour(str.toString());
                 }
                 String[] strs = calendarObject.getColour().split(",");
                 List<String> list = new ArrayList();
