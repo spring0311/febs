@@ -723,7 +723,6 @@ public class MatterController extends BaseController {
     @ResponseBody
     @RequiresPermissions("matter:view")
     public FebsResponse getAllMatterToCalendar(HttpServletRequest request, Matter matter) {
-        System.err.println("getAllMatterToCalendar!!!!!!!!!!:" + matter);
         matter.setLongUserId((Long) request.getSession().getAttribute("userId"));
         matter.setIsPatriarch(0);
         matter.setIsOpen(0);
@@ -756,35 +755,47 @@ public class MatterController extends BaseController {
         return new FebsResponse().success().data(viewDispose(calendarObjects));
     }
 
+    private int i = 0;
+
     private List<CalendarObject> viewDispose(List<CalendarObject> calendarObjects) {
         calendarObjects.forEach(calendarObject -> {
+            System.err.println("???" + calendarObject);
             str = str.delete(0, str.length());
             str = str.append(calendarObject.getColour());
+            i = 0;
             calendarObjects.forEach(calendarObject_ -> {
                 if (calendarObject.getName().equals(calendarObject_.getName())) {
-                    str = str.append("," + calendarObject_.getColour());
-                    calendarObject.setColour(str.toString());
-                }
-                String[] strs = calendarObject.getColour().split(",");
-                List<String> list = new ArrayList();
-                //遍历数组往集合里存元素
-                for (int i = 0; i < strs.length; i++) {
-                    //如果集合里面没有相同的元素才往里存
-                    if (!list.contains(strs[i])) {
-                        list.add(strs[i]);
+                    if (i > 0)
+                        return;
+                    if (calendarObject_.getColour().length() > 3) {
+                        calendarObject.setColour(calendarObject_.getColour());
+                        i++;
+                    } else {
+                        str = str.append("," + calendarObject_.getColour());
+                        calendarObject.setColour(str.toString());
                     }
                 }
-                //toArray()方法会返回一个包含集合所有元素的Object类型数组
-                Object[] newStrs = list.toArray();
-                calendarObject.setValue(newStrs);
             });
+            System.err.println("!!!" + calendarObject);
         });
         calendarObjects.forEach(d -> {
+            String[] strs = d.getColour().split(",");
+            List<String> list = new ArrayList();
+            //遍历数组往集合里存元素
+            for (int i = 0; i < strs.length; i++) {
+                //如果集合里面没有相同的元素才往里存
+                if (!list.contains(strs[i])) {
+                    list.add(strs[i]);
+                }
+            }
+            //toArray()方法会返回一个包含集合所有元素的Object类型数组
+            Object[] newStrs = list.toArray();
+            d.setValue(newStrs);
             d.setColour(null);
-            System.err.println(d);
         });
         return calendarObjects;
     }
+
 
     static Long[] getLongs(String[] stringArray) {
         List<Long> list = new ArrayList<>();

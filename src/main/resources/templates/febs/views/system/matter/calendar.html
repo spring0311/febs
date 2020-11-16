@@ -228,6 +228,9 @@
                 done: function (value, date) { //监听日期被切换
                     console.log("value:" + value)
                     initTable(value);
+                },
+                change: function () {
+                    console.log('change')
                 }
             })
         }

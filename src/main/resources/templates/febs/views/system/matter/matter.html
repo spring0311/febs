@@ -291,7 +291,7 @@
             if (layEvent === 'edit') {
                 matterId = data.matterId;
                 febs.modal.open('修改事务', 'system/matter/update/' + matterId, {
-                    area: $(window).width() <= 750 ? '90%' : '50%',
+                    area: [$(window).width() <= 750 ? '80%' : '60%', $(window).height() <= 1000 ? '80%' : '60%'],
                     btn: ['提交', '取消'],
                     yes: function (index, layero) {
                         $('#matter-update').find('#submit').trigger('click');
