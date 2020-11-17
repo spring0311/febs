@@ -102,8 +102,6 @@ public class MatterController extends BaseController {
     @ResponseBody
     @RequiresPermissions("matter:view")
     public FebsResponse matterIndexListPOut(QueryRequest request, Matter matter, HttpServletRequest httpRequest) {
-        //System.err.println("MatterController:start...");
-        System.err.println("MatterController:" + matter);
         matter.setIsOpen(0);
         matter.setIsPatriarch(0);
         QueryWrapper<Matter> queryWrapper = new QueryWrapper<>();
@@ -159,9 +157,6 @@ public class MatterController extends BaseController {
             if (getNoOverNum(dao) != 0 && getNoOverNum(dao) != null)
                 list.add(echarts);
         });
-        list.forEach(xx -> {
-            System.err.println(xx);
-        });
         return new FebsResponse().success().data(list);
     }
 
@@ -206,7 +201,6 @@ public class MatterController extends BaseController {
 
     @GetMapping(FebsConstant.VIEW_PREFIX + "matter")
     public String matterIndex() {
-        //System.err.println("matterIndex");
         return FebsUtil.view("matter/matter");
     }
 
@@ -233,15 +227,11 @@ public class MatterController extends BaseController {
         } else if ("1".equals(matter.getFinish()) || matter.getFinish() == 1) {
             matter.setFinish(1);
         }
-        System.err.println("时间轴:" + matter);
         HttpSession session = request.getSession();
         String line = session.getAttribute("userId").toString();
         matter.setLongUserId(Long.valueOf(line));
         matter.setIsOpen(0);
         matter.setIsPatriarch(0);
-        matterService.findMatters(matter).forEach(dao -> {
-            System.err.println(dao.getMatterName() + "," + dao.getCreateTimeStr() + "," + dao.getEndStr() + "," + dao.getActuallyTime());
-        });
         return new FebsResponse().success().data(matterService.findMatters(matter));
     }
 
@@ -250,8 +240,6 @@ public class MatterController extends BaseController {
     @ResponseBody
     @RequiresPermissions("matter:view")
     public FebsResponse matterList(QueryRequest request, Matter matter, HttpServletRequest httpRequest) {
-        //System.err.println("MatterController:start...");
-        // System.err.println("MatterController:" + matter);
         HttpSession session = httpRequest.getSession();
         matter.setDeptId((Long) session.getAttribute("deptId"));
         matter.setIsPatriarch(1);
@@ -263,8 +251,6 @@ public class MatterController extends BaseController {
     @ResponseBody
     @RequiresPermissions("matter:view")
     public FebsResponse matterListPOut(QueryRequest request, Matter matter, HttpServletRequest httpRequest) {
-        //System.err.println("MatterController:start...");
-        // System.err.println("MatterController:" + matter);
         Matter select = new Matter();
         select.setPatriarchId(Long.valueOf(httpRequest.getSession().getAttribute("insertMatterId").toString()));
         select.setIsPatriarch(0);
@@ -290,9 +276,7 @@ public class MatterController extends BaseController {
         Matter matter = new Matter();
         matter.setDeptId(deptId);
         matter.setIsPatriarch(1);
-        // System.err.println("MatterController:start...");
         Map<String, Object> dataTable = getDataTable(this.matterService.findMatters(request, matter));
-        // System.err.println("MatterController:" + matter);
         return new FebsResponse().success().data(dataTable);
     }
 
@@ -302,19 +286,13 @@ public class MatterController extends BaseController {
     public FebsResponse matterListByUserId(QueryRequest request, Matter matter, HttpServletRequest httpServletRequest) {
         matter.setLongUserId((Long) httpServletRequest.getSession().getAttribute("userId"));
         matter.setIsOpen(0);
-        System.err.println(matter);
         if (matter.getFinish() == null) {
             matter.setFinish(0);
         } else if (matter.getFinish() == 2) {
-            System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             matter.setFinish(null);
         }
         matter.setIsPatriarch(0);
-        //matter.setFinish(0);
-        System.err.println(matter);
-        // System.err.println("MatterController:start...");
         Map<String, Object> dataTable = getDataTable(this.matterService.findMattersForOne(request, matter));
-        // System.err.println("MatterController:" + matter);
         return new FebsResponse().success().data(dataTable);
     }
 
@@ -324,8 +302,6 @@ public class MatterController extends BaseController {
     @RequiresPermissions("matter:view")
     @Valid
     public FebsResponse addMatter(@Valid Matter matter, BindingResult BR) throws ParseException {
-        System.err.println("addMatter:" + matter);
-        //System.err.println(matter);
         this.matterService.createMatter(matter);
         return new FebsResponse().success();
     }
@@ -341,7 +317,6 @@ public class MatterController extends BaseController {
         matter.setDeptId(0l);
         matter.setCreateTime(new Date());
         matter.setIsOpen(0);
-        System.err.println("addMatterOne:" + matter);
         this.matterService.createMatterOne(matter);
         Long matterId = this.matterService.maxMatterId();
         return new FebsResponse().success().data(matterId);
@@ -352,7 +327,6 @@ public class MatterController extends BaseController {
     @ResponseBody
     //@RequiresPermissions("matter:delete")
     public FebsResponse deleteMatter(Matter matter) {
-        System.err.println("deleteMatter(Matter matter)");
         this.matterService.deleteMatter(matter);
         return new FebsResponse().success();
     }
@@ -362,7 +336,6 @@ public class MatterController extends BaseController {
     @ResponseBody
     // @RequiresPermissions("matter:delete")
     public FebsResponse deleteMatterById(@PathVariable("matterId") Long matterId) {
-        //System.err.println("MatterController:deleteMatterById:"+matterId);
         this.matterService.deleteMatterById(matterId);
         return new FebsResponse().success();
     }
@@ -371,13 +344,6 @@ public class MatterController extends BaseController {
     //@RequiresPermissions("user:delete")
     @ControllerEndpoint(operation = "删除用户", exceptionMessage = "删除用户失败")
     public FebsResponse deleteMatters(@NotBlank(message = "{required}") @PathVariable Long[] matterIds) {
-        /*
-         * String[] ids = userIds.split(StringPool.COMMA);
-         * this.userService.deleteUsers(ids);
-         * return new FebsResponse().success();
-         *
-         */
-        //System.err.println(matterIds);
         for (Long maid : matterIds) {
             matterService.deleteMatterById(maid);
         }
@@ -389,7 +355,6 @@ public class MatterController extends BaseController {
     @ResponseBody
     //@RequiresPermissions("matter:update")
     public FebsResponse updateMatter(Matter matter) throws ParseException {
-        System.err.println("updateMatter:" + matter);
         if (matter.getCycleIdStr() != null) {
             changePeriod(matter);
         }
@@ -408,7 +373,6 @@ public class MatterController extends BaseController {
     @PostMapping("matter/addOut")
     @ResponseBody
     public FebsResponse addOutMatter(Matter matter) {
-        System.err.println("addOutMatter:" + matter);
         /**
          * 父事项
          */
@@ -556,9 +520,6 @@ public class MatterController extends BaseController {
     @ResponseBody
     //@RequiresPermissions("matter:update")
     public FebsResponse getMatterRemindOne(Remind remind, QueryRequest request) {
-        //System.err.println("updateMatter:" + matter);
-        System.err.println("getMatterRemindOne:" + remind);
-        System.err.println("getMatterRemindOne::" + remind);
         QueryWrapper<Remind> queryWrapper = new QueryWrapper<>();
         queryWrapper.setEntity(remind);
         Page<Remind> page = new Page<>(request.getPageNum(), request.getPageSize());
@@ -630,7 +591,6 @@ public class MatterController extends BaseController {
         QueryWrapper<UserMatter> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("USER_ID", userId);
         queryWrapper.eq("MATTER_ID", matterId);
-        System.err.println(userMatter);
         UserMatter dao = userMatterMapper.selectOne(queryWrapper);
         if (dao.getFinish() == 1) {
             dao.setFinish(0);
@@ -653,9 +613,6 @@ public class MatterController extends BaseController {
     private void updateRemind(Matter matter) {
         //查处原数据
         List<Matter> matters = matterService.findMatters(matter);
-        matters.forEach(dao -> {
-            System.err.println("updateRemind:" + dao);
-        });
         Matter matterDao = matters.get(0);
         //得到修改前后的remindId
         String before = matter.getRemindId();
@@ -669,7 +626,6 @@ public class MatterController extends BaseController {
         ) {
             if (!listBefore.contains(t)) {
                 diff.add(t);
-                System.err.println(t);
             }
         }
         //处理得到的不同Id
@@ -759,7 +715,6 @@ public class MatterController extends BaseController {
 
     private List<CalendarObject> viewDispose(List<CalendarObject> calendarObjects) {
         calendarObjects.forEach(calendarObject -> {
-            System.err.println("???" + calendarObject);
             str = str.delete(0, str.length());
             str = str.append(calendarObject.getColour());
             i = 0;
@@ -776,7 +731,6 @@ public class MatterController extends BaseController {
                     }
                 }
             });
-            System.err.println("!!!" + calendarObject);
         });
         calendarObjects.forEach(d -> {
             String[] strs = d.getColour().split(",");
@@ -942,7 +896,6 @@ public class MatterController extends BaseController {
         if (list.size() > 0) {
             list.forEach(dao -> {
                 dao.setForEach(0);
-                System.err.println("定时任务的dao:" + dao);
                 Long userId = Long.valueOf(dao.getUserId());
                 Long oldId = dao.getMatterId();
                 matterService.saveOrUpdate(dao);
@@ -1022,7 +975,6 @@ public class MatterController extends BaseController {
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);
         calendar.add(calendar.DATE, addDay);
-        System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!!::" + addDay);
         date = calendar.getTime();
         String end = simpleDateFormat.format(date);
         return end;

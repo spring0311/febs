@@ -74,7 +74,6 @@ public class MatterServiceImpl extends ServiceImpl<MatterMapper, Matter> impleme
 
     @Override
     public IPage<Matter> findMatterOut(QueryRequest request, Matter matter) {
-        System.err.println(matter);
         QueryWrapper<Matter> queryWrapper = new QueryWrapper<>();
         queryWrapper.setEntity(matter);
         List<Matter> list = matterMapper.selectList(queryWrapper);
@@ -198,10 +197,7 @@ public class MatterServiceImpl extends ServiceImpl<MatterMapper, Matter> impleme
         matters.forEach(dao -> {
             dao.setColor(color(dao));
         });
-        //page.setTotal(baseMapper.countMatterDetail(matter));
         page.setTotal(matters.size());
-        //page.setTotal(baseMapper.countMatterDetailForOne(matter));
-        //System.err.println("MatterService:" + matter);
         SortUtil.handlePageSort(request, page, "matterId", FebsConstant.ORDER_ASC, false);
         IPage<Matter> iPage = this.baseMapper.findMatterDetailPage(page, matter);
         List<Matter> list = iPage.getRecords();
@@ -224,7 +220,6 @@ public class MatterServiceImpl extends ServiceImpl<MatterMapper, Matter> impleme
     @Override
     public void deleteMatterById(Long matterId) {
         // TODO Auto-generated method stub
-        //System.err.println("MatterService:deleteMatterById"+matterId);
         deleteAllByMatterId(matterId);
         QueryWrapper<Matter> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("PATRIARCH_ID", matterId);
@@ -288,7 +283,6 @@ public class MatterServiceImpl extends ServiceImpl<MatterMapper, Matter> impleme
         UserMatter userMatter = userMatterMapper.selectByMap(map).get(0);
         userMatter.setFinish(1);
         userMatter.setActuallyTime(new Date());
-        System.err.println("finishMatter:" + userMatter);
         userMatterMapper.updateById(userMatter);
     }
 
@@ -302,7 +296,6 @@ public class MatterServiceImpl extends ServiceImpl<MatterMapper, Matter> impleme
         map.put("USER_ID", userId);
         UserMatter userMatter = userMatterMapper.selectByMap(map).get(0);
         userMatter.setFinish(0);
-        System.err.println("finishMatter:" + userMatter);
         userMatterMapper.updateById(userMatter);
     }
 
@@ -372,14 +365,10 @@ public class MatterServiceImpl extends ServiceImpl<MatterMapper, Matter> impleme
 
     @Override
     public void userMatter(Long oldId, Long matterId, Long userId) {
-        System.err.println("oldId:" + oldId);
-        System.err.println("matterId:" + matterId);
-        System.err.println("userId:" + userId);
         QueryWrapper<UserMatter> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("MATTER_ID", oldId);
         queryWrapper.eq("USER_ID", userId);
         UserMatter userMatter = userMatterMapper.selectList(queryWrapper).get(0);
-        System.err.println("usermatter:" + userMatter);
         userMatter.setTUserMatterId(null);
         userMatter.setMatterId(matterId);
         userMatter.setFinish(0);
@@ -399,10 +388,8 @@ public class MatterServiceImpl extends ServiceImpl<MatterMapper, Matter> impleme
             matter.setUserId("0");
         }
         matter.setCreateTime(new Date());
-        System.err.println(matter);
         //先行得到用户ID字符串
         String[] userIds = null;
-        System.err.println("createMatter:matter:" + matter);
         if (!"".equals(matter.getTeamId())) {
             userIds = getUserIds(matter);
         } else {
@@ -415,7 +402,6 @@ public class MatterServiceImpl extends ServiceImpl<MatterMapper, Matter> impleme
         Period dao = periodService.getById(period.getParentId());
         matter.setPeriod(dao.getPeriodName());
         matter.setCycleId(dao.getPeriodId());
-        System.err.println("插入的matter:" + matter);
         matterMapper.insert(matter);
         //查询到插入后的matterId
         Long matterId = matterMapper.findMaxId();
@@ -431,7 +417,6 @@ public class MatterServiceImpl extends ServiceImpl<MatterMapper, Matter> impleme
         ) {
             Long userLongId = Long.parseLong(userId);
             userMatter.setUserId(userLongId);
-            //System.err.println("userMatter:" + userMatter);
             userMatterMapper.insert(userMatter);
         }
     }
@@ -456,13 +441,6 @@ public class MatterServiceImpl extends ServiceImpl<MatterMapper, Matter> impleme
         String[] strings = ids.split(",");
         UserDataPermission userDataPermission = new UserDataPermission();
         userDataPermission.setMatterId(matterId);
-       /* for (String periodId : strings) {
-            userDataPermission.setDeptId(System.currentTimeMillis());
-            userDataPermission.setUserId(System.currentTimeMillis());
-            userDataPermission.setPeriodId(Long.valueOf(periodId));
-            System.err.println("insertInto:" + userDataPermission);
-            userDataPermissionMapper.insert(userDataPermission);
-        }*/
         Long time = System.currentTimeMillis();
         for (int i = 0; i < strings.length; i++) {
             time += 1;
@@ -500,7 +478,6 @@ public class MatterServiceImpl extends ServiceImpl<MatterMapper, Matter> impleme
         if ("".equals(matter.getUserId())) {
             matter.setUserId("0");
         }
-        System.err.println("updateMatter!!!!");
         UserMatter userMatter = new UserMatter();
         String userIds = matter.getUserId();
         //删除修改前映射数据
@@ -513,7 +490,6 @@ public class MatterServiceImpl extends ServiceImpl<MatterMapper, Matter> impleme
         userMatter.setMatterId(matter.getMatterId());
         String[] userIdss = null;
         if ("1".equals(matter.getIsOpen()) || matter.getIsOpen() == 1) {
-            System.err.println("updateMatter:修改完成状态");
             userMatter.setFinish(0);
         }
         if (!"".equals(matter.getTeamId()) && matter.getTeamId() != null) {
