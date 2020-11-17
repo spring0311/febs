@@ -11,7 +11,7 @@
                     <div style="display: none">
                         <input name="isPatriarch">
                     </div>
-                    <div class="layui-form-item">
+                    <!--<div class="layui-form-item">
                         <label class="layui-form-label">工作事项</label>
                         <div class="layui-input-block layui-input-inline">
                             <input type="text" name="matterName" lay-verify="title"
@@ -20,6 +20,21 @@
                         </div>
                         <label class="layui-form-label ">开启状态</label>
                         <div class="layui-input-block layui-input-inline">
+                            <input type="radio" name="isOpen" value="0" title="正常" checked="">
+                            <input type="radio" name="isOpen" value="1" title="暂停">
+                        </div>
+                    </div>-->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">工作事项</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="matterName" lay-verify="required"
+                                   autocomplete="off" placeholder="请输入工作事项"
+                                   class="layui-input" minlength="2" maxlength="80">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label ">开启状态</label>
+                        <div class="layui-input-block">
                             <input type="radio" name="isOpen" value="0" title="正常" checked="">
                             <input type="radio" name="isOpen" value="1" title="暂停">
                         </div>
