@@ -452,7 +452,7 @@ public class MatterServiceImpl extends ServiceImpl<MatterMapper, Matter> impleme
     }
 
     private String[] getUserIds(Matter matter) {
-        String userIds = matter.getUserId();
+        String userIds = "0";
         String teamIds = matter.getTeamId();
         String[] teamIdS = teamIds.split(",");
         for (String teamId : teamIdS

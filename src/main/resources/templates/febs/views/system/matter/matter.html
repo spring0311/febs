@@ -418,8 +418,8 @@
 
         var addMatter = function (data) {
             /*   }*/
-            if (data.userId == '' && data.teamId == '') {
-                febs.alert.success('请选择责任人与责任小组!');
+            if (data.teamId == '') {
+                febs.alert.success('请选择责任群!');
             } else {
                 febs.post(ctx + 'matter/add', data, function () {
                     layer.closeAll();
@@ -431,14 +431,14 @@
         }
 
         var updateMatter = function (data) {
-            if (data.userId == '' && data.teamId == '') {
-                febs.alert.success('请选择责任人与责任小组!');
+            if (data.teamId == '') {
+                febs.alert.success('请选择责任群!');
             } else {
                 febs.post(ctx + 'matter/update', data, function () {
                     layer.closeAll();
-                    febs.alert.success('修改成功');
                     $query.trigger('click');
-                    $('#febs-matter').find('#reset').click();
+                    febs.alert.success('修改成功');
+                    /*$('#febs-matter').find('#reset').click();*/
                 });
             }
 
