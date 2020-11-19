@@ -100,6 +100,7 @@ public class AlarmTaskTime implements InitializingBean {
             reminds.forEach(remind -> {
                 QueryWrapper<UserMatter> userMatterQueryWrapper = new QueryWrapper<>();
                 userMatterQueryWrapper.eq("MATTER_ID", remind.getMatterId());
+                userMatterQueryWrapper.eq("USER_ID", remind.getUserId());
                 userMatterQueryWrapper.eq("FINISH", 0);
                 userMatterQueryWrapper.eq("IS_REMIND", 1);
                 matterService.findUserMatters(userMatterQueryWrapper);

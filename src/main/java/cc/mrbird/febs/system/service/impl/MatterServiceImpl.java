@@ -452,7 +452,7 @@ public class MatterServiceImpl extends ServiceImpl<MatterMapper, Matter> impleme
     }
 
     private String[] getUserIds(Matter matter) {
-        String userIds = "0";
+        String userIds = "";
         String teamIds = matter.getTeamId();
         String[] teamIdS = teamIds.split(",");
         for (String teamId : teamIdS
@@ -461,7 +461,7 @@ public class MatterServiceImpl extends ServiceImpl<MatterMapper, Matter> impleme
             Long id = Long.valueOf(teamId);
             team.setTeamId(id);
             team = teamMapper.findTeams(team).get(0);
-            userIds = userIds + "," + team.getUserId();
+            userIds = userIds + team.getUserId();
         }
         //得到用户Id去重复 转换为Set
         String[] userIdS = userIds.split(",");

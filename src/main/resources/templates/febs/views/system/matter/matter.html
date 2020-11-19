@@ -168,7 +168,6 @@
 
         showshopm = function (t) {
             var event = $(t).attr('lay-event');
-            console.log(event);
             //小tips
             if (event == 'edit') {
                 openMsg('修改事项', t, '#3595CC');
@@ -205,7 +204,6 @@
 
         $query.on('click', function () {
             var params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
-            console.log(params);
             tableIns.reload({where: params, page: {curr: 1}});
         });
 
@@ -276,7 +274,6 @@
         function sessionRemove() {
             febs.get(ctx + 'period/sessionDel', null, function () {
                 // console.log("deptId:" + deptId);
-                console.log("OK");
             })
         }
 
@@ -346,7 +343,6 @@
         });
 
         function closeMatters() {
-            console.log('点击!!!!!!');
 
         }
 
@@ -402,6 +398,7 @@
         });
 
         form.on('submit(matter-update-form-submit)', function (data) {
+            console.log('?????');
             updateMatter(data.field)
             return false;
         })
@@ -438,7 +435,6 @@
                     layer.closeAll();
                     $query.trigger('click');
                     febs.alert.success('修改成功');
-                    /*$('#febs-matter').find('#reset').click();*/
                 });
             }
 
