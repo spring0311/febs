@@ -56,7 +56,7 @@ public class AlarmTaskTime implements InitializingBean {
      *
      * @throws ParseException
      */
-    @Scheduled(cron = "0 30 09 * * ?")//触发时间 秒 分 时
+    @Scheduled(cron = "0 50 00 * * ?")//触发时间 秒 分 时
     public void selectMatterRemind() throws ParseException {
         //得到当前时间的yyyy-MM-dd
         Date date = new Date();
@@ -83,14 +83,14 @@ public class AlarmTaskTime implements InitializingBean {
     /**
      * @throws ParseException
      */
-    @Scheduled(cron = "10 30 09 * * ?")//触发时间 秒 分 时
+    @Scheduled(cron = "0 45 00 * * ?")//触发时间 秒 分 时
     public void selectMatterRemindByOne() throws ParseException {
         //得到当前时间的yyyy-MM-dd
         Date date = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd");
         String dateStr = simpleDateFormat.format(date);
         QueryWrapper<Remind> remindQueryWrapper = new QueryWrapper<>();
-        //不是用户创建
+        //是用户创建
         remindQueryWrapper.eq("USER_BY", 1);
         //已激活
         remindQueryWrapper.eq("IS_ACTIVATE", 1);
@@ -114,7 +114,7 @@ public class AlarmTaskTime implements InitializingBean {
      *
      * @throws ParseException
      */
-    @Scheduled(cron = "0 30 09 * * ?")
+    @Scheduled(cron = "0 40 00 * * ?")
     public void endTimeRemind() throws ParseException {
         String date = getDate();
         List<Long> matterIds = matterService.selectMatterIdsByEndTime(date);
@@ -128,7 +128,7 @@ public class AlarmTaskTime implements InitializingBean {
     /**
      * 个人周期循环 月
      */
-    @Scheduled(cron = "0 30 09 * * ?")
+    @Scheduled(cron = "0 35 00 * * ?")
     public void forEachOne() throws ParseException {
         Date now = new Date();
         Calendar calendar = Calendar.getInstance();
@@ -142,13 +142,13 @@ public class AlarmTaskTime implements InitializingBean {
         matter.setMatterOpenStr(dateStr);
         matter.setForEach(1);
         matter.setIsOpen(0);
+        matter.setDeptId(0l);
         matter.setIsPatriarch(0);
         //
         List<Matter> list = matterService.findMatters(matter);
         if (list.size() > 0) {
             list.forEach(dao -> {
                 dao.setForEach(0);
-                System.err.println("定时任务的dao:" + dao);
                 Long userId = Long.valueOf(dao.getUserId());
                 Long oldId = dao.getMatterId();
                 matterService.saveOrUpdate(dao);
@@ -169,7 +169,7 @@ public class AlarmTaskTime implements InitializingBean {
     /**
      * 周期定时
      */
-    @Scheduled(cron = "0 30 09 * * ?")
+    @Scheduled(cron = "0 30 00 * * ?")
     public void cycleMatter() {
         Date now = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd");

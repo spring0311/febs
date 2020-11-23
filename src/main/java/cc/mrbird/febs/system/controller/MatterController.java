@@ -891,6 +891,7 @@ public class MatterController extends BaseController {
         matter.setMatterOpenStr(dateStr);
         matter.setForEach(1);
         matter.setIsOpen(0);
+        matter.setDeptId(0l);
         matter.setIsPatriarch(0);
         //
         List<Matter> list = matterService.findMatters(matter);
